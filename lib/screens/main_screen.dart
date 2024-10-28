@@ -8,7 +8,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/';
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   MainScreenState createState() => MainScreenState();
@@ -43,10 +43,7 @@ class MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // The body content based on the selected index
           body[_bottomNavIndex],
-
-          // Floating Bottom Navigation Bar
           Positioned(
             bottom: 16, // Adjust the position from the bottom
             left: 16,

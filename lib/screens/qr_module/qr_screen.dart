@@ -29,6 +29,7 @@ class _QRScreenState extends State<QRScreen> {
       setState(() {
         result = scanData;
       });
+      _showDetailBottomSheet(); // Automatically show bottom sheet after scan
     });
   }
 
@@ -92,7 +93,7 @@ class _QRScreenState extends State<QRScreen> {
   void _showDetailBottomSheet() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Agar bisa ditarik lebih tinggi
+      isScrollControlled: true, // Allows dragging higher
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(25.0),
@@ -107,7 +108,20 @@ class _QRScreenState extends State<QRScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Container(
+                        width: 50,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     const Text(
                       'Detail Scan',
                       style: TextStyle(
@@ -121,7 +135,12 @@ class _QRScreenState extends State<QRScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 20),
-                    // Tambahkan detail lainnya sesuai kebutuhan
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close bottom sheet
+                      },
+                      child: const Text('Kembali'),
+                    ),
                   ],
                 ),
               ),

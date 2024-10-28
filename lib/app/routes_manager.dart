@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heycowmobileapp/screens/auth_module/activation_screen.dart';
@@ -19,12 +18,21 @@ class RoutesManager {
     GetPage(name: BerandaScreen.routeName, page: () => const BerandaScreen()),
     GetPage(name: SplashScreen.routeName, page: () => const SplashScreen()),
     GetPage(name: LoginScreen.routeName, page: () => const LoginScreen()),
-    GetPage(name: ForgotPasswordScreen.routeName, page: () => const ForgotPasswordScreen()),
-    GetPage(name: ResetPasswordSuccessScreen.routeName, page: () => const ResetPasswordSuccessScreen()),
-    GetPage(name: ResetPasswordFailedScreen.routeName, page: () => const ResetPasswordFailedScreen()),
+    GetPage(
+        name: ForgotPasswordScreen.routeName,
+        page: () => const ForgotPasswordScreen()),
+    GetPage(
+        name: ResetPasswordSuccessScreen.routeName,
+        page: () => const ResetPasswordSuccessScreen()),
+    GetPage(
+        name: ResetPasswordFailedScreen.routeName,
+        page: () => const ResetPasswordFailedScreen()),
     GetPage(name: RegisterScreen.routeName, page: () => const RegisterScreen()),
-    GetPage(name: SuccessRegisterScreen.routeName, page: () => const SuccessRegisterScreen()),
-    GetPage(name: ActivationScreen.routeName, page: () => const ActivationScreen()),
+    GetPage(
+        name: SuccessRegisterScreen.routeName,
+        page: () => const SuccessRegisterScreen()),
+    GetPage(
+        name: ActivationScreen.routeName, page: () => const ActivationScreen()),
     GetPage(
       name: '/noRouteDefined', // This is a route for undefined routes
       page: () => const Scaffold(

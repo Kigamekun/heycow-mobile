@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
+import 'package:heycowmobileapp/screens/auth_module/register_screen.dart';
 import 'package:heycowmobileapp/widgets/mpp_button.dart';
 import 'package:heycowmobileapp/widgets/mpp_textfield.dart';
 import 'package:heycowmobileapp/screens/auth_module/forgot_password_screen.dart';
@@ -109,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const Text("Sudah punya akun? "),
                         TextButton(
-                          onPressed: () => Get.toNamed('/register'),
+                          onPressed: () =>  Get.to(() => const RegisterScreen()),
                           child: const Text(
                             'Register',
                             style: TextStyle(

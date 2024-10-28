@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:heycowmobileapp/controllers/auth_controller.dart'; // Import your AuthController
+import 'package:heycowmobileapp/screens/auth_module/edit_profile_screen.dart';
+import 'package:heycowmobileapp/screens/auth_module/help_center_screen.dart';
 
 class UserScreen extends StatefulWidget {
   static const routeName = '/beranda';
@@ -10,7 +14,15 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
+  final AuthController _authController = Get.find<AuthController>();
+
+
   @override
+  void initState() {
+    super.initState();
+    _authController.getUser(); // Call the getUserData method
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,8 +44,8 @@ class _UserScreenState extends State<UserScreen> {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Color(0xff20A577), // Top color
-                                  Color(0xff64CFAA), // Bottom color
+                                  Color(0xff20A577),
+                                  Color(0xff64CFAA),
                                 ],
                                 stops: [0.1, 0.5],
                               ),
@@ -42,7 +54,7 @@ class _UserScreenState extends State<UserScreen> {
                                 bottomRight: Radius.circular(40),
                               ),
                             ),
-                            height: 250, // Height of the gradient container
+                            height: 250,
                             width: double.infinity,
                           ),
                           const SizedBox(height: 55),
@@ -85,18 +97,15 @@ class _UserScreenState extends State<UserScreen> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-
-                              // Button with 80% width and centered
                               Center(
                                 child: SizedBox(
-                                  width: MediaQuery.of(context).size.width *
-                                      0.8, // 80% of screen width
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.green,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            16), // Rounded corners
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
                                     ),
                                     onPressed: () {
@@ -126,7 +135,6 @@ class _UserScreenState extends State<UserScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        // Personal Information Section
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -139,7 +147,7 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                             TextButton.icon(
                               onPressed: () {
-                                // Implement Edit Action
+                                Get.to(() => EditProfileScreen());
                               },
                               icon: const Icon(Icons.edit, color: Colors.green),
                               label: const Text(
@@ -149,30 +157,30 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 8),
-
-                        // Personal Information Items
                         Card(
                           color: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Column(
-                            children: [
-                              _buildInfoTile(Icons.person_outline, 'name'),
-                              _buildInfoTile(Icons.email_outlined, 'email'),
-                              _buildInfoTile(
-                                  Icons.phone_outlined, 'phone number'),
-                              _buildInfoTile(
-                                  Icons.agriculture_outlined, 'farm name'),
-                            ],
-                          ),
+                          child: Obx(() {
+                            // Using Obx to listen to changes in the user observable
+                            return Column(
+                              children: [
+                                _buildInfoTile(Icons.person_outline,
+                                    _authController.nama.value ?? 'name'),
+                                _buildInfoTile(Icons.email_outlined,
+                                    _authController.email.value ?? 'email'),
+                                _buildInfoTile(Icons.phone_outlined,
+                                    _authController.phone.value ??
+                                        'phone number'),
+                                _buildInfoTile(Icons.agriculture_outlined,
+                                    _authController.farmName.value ?? 'farm s'),
+                              ],
+                            );
+                          }),
                         ),
-
                         const SizedBox(height: 24),
-
-                        // Other Options Section
                         Card(
                           color: Colors.white,
                           shape: RoundedRectangleBorder(
@@ -181,16 +189,31 @@ class _UserScreenState extends State<UserScreen> {
                           child: Column(
                             children: [
                               _buildOptionTile(
-                                  Icons.help_outline, 'help center'),
+                                Icons.help_outline,
+                                'Help Center',
+                                onTap: () {
+                                  Get.to(() => const HelpCenterScreen());
+                                },
+                              ),
                               _buildOptionTile(
-                                  Icons.forum_outlined, 'community'),
+                                Icons.forum_outlined,
+                                'Community',
+                                onTap: () {},
+                              ),
                               _buildOptionTile(
-                                  Icons.catching_pokemon_outlined, 'cattle'),
+                                Icons.catching_pokemon_outlined,
+                                'Cattle',
+                                onTap: () {},
+                              ),
                               _buildOptionTile(
                                 Icons.logout,
-                                'log out',
+                                'Log Out',
                                 iconColor: Colors.red,
                                 textColor: Colors.red,
+                                onTap: () {
+                                  _authController.logout();
+                                  Get.offAllNamed('/login');
+                                },
                               ),
                             ],
                           ),
@@ -203,9 +226,29 @@ class _UserScreenState extends State<UserScreen> {
               ),
             ),
           ),
-          // Floating Bottom Navigation Bar
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoTile(IconData icon, String label) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.green),
+      title: Text(label, style: const TextStyle(fontSize: 16)),
+    );
+  }
+
+  Widget _buildOptionTile(IconData icon, String label,
+      {Color iconColor = Colors.green,
+      Color textColor = Colors.black,
+      required Function() onTap}) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(
+        label,
+        style: TextStyle(fontSize: 16, color: textColor),
+      ),
+      onTap: onTap,
     );
   }
 }
@@ -218,12 +261,15 @@ Widget _buildInfoTile(IconData icon, String label) {
 }
 
 Widget _buildOptionTile(IconData icon, String label,
-    {Color iconColor = Colors.green, Color textColor = Colors.black}) {
+    {Color iconColor = Colors.green,
+    Color textColor = Colors.black,
+    required Function() onTap}) {
   return ListTile(
     leading: Icon(icon, color: iconColor),
     title: Text(
       label,
       style: TextStyle(fontSize: 16, color: textColor),
     ),
+    onTap: onTap, // Add the onTap callback
   );
 }

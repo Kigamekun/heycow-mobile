@@ -5,14 +5,6 @@ import 'package:heycowmobileapp/controllers/auth_controller.dart';
 import 'package:heycowmobileapp/screens/auth_module/login_screen.dart';
 import 'package:heycowmobileapp/screens/main_screen.dart';
 
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:heycowmobileapp/controllers/auth_controller.dart';
-import 'package:heycowmobileapp/screens/auth_module/login_screen.dart';
-import 'package:heycowmobileapp/screens/main_screen.dart';
-
 class SplashScreen extends StatefulWidget {
   static const routeName = '/splash';
 
@@ -112,9 +104,9 @@ class _SplashScreenState extends State<SplashScreen>
             child: child,
           );
         },
-        child: _showSecondSplash ? _buildSecondSplash() : _buildFirstSplash(),
         switchInCurve: Curves.easeInOut,
         switchOutCurve: Curves.easeInOut,
+        child: _showSecondSplash ? _buildSecondSplash() : _buildFirstSplash(),
       ),
     );
   }

@@ -6,7 +6,7 @@ import 'package:heycowmobileapp/widgets/mpp_appbar.dart';
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile';
 
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MPPAppBar(),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         child: Stack(
           children: [],
         ),

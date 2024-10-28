@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
 import 'package:heycowmobileapp/controllers/beranda_controller.dart';
-import 'package:heycowmobileapp/models/config.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -31,7 +30,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
       Completer<GoogleMapController>();
   late CameraPosition _kGooglePlex;
 
-  late ConfigItem _configItem;
   int _selectedIndex = 0; // To keep track of selected index
 
   List<_SalesData> data = [
@@ -50,39 +48,11 @@ class _BerandaScreenState extends State<BerandaScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _kGooglePlex = const CameraPosition(
-      target: LatLng(0, 0),
-      zoom: 1,
-    );
-    berandaController.fetchSliderItems();
-    berandaController.fetchConfigItems().then((configItem) {
-      setState(() {
-        _configItem = configItem;
-      });
-      setCameraPosition();
-    });
-    _authController.getUser();
-  }
-
-  void setCameraPosition() {
-    setState(() {
-      _kGooglePlex = CameraPosition(
-        target: LatLng(
-          double.parse(_configItem.locationLat),
-          double.parse(_configItem.locationLong),
-        ),
-        zoom: 10,
-      );
-    });
-  }
+  void setCameraPosition() {}
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      // Add your page navigation logic here
     });
   }
 
@@ -158,8 +128,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-
-                              // button elevated
                               SizedBox(
                                 width: double
                                     .infinity, // Membuat tombol full width
@@ -189,7 +157,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-
                               Container(
                                 child: Row(
                                   children: <Widget>[
@@ -227,9 +194,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                         ],
                                       ),
                                     ),
-
                                     const SizedBox(width: 20),
-
                                     // Expanded kedua dengan flex 2
                                     Expanded(
                                       flex: 3,
@@ -267,7 +232,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                   ],
                                 ),
                               ),
-
                               const SizedBox(height: 20),
                             ],
                           ),
@@ -284,7 +248,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                           child: Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
-                              _authController.nama.value + "'s Farm",
+                              "${_authController.nama.value.split(' ')[0]}'s Farm",
                               style: const TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -463,7 +427,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    'Ear Tag Terpasang',
+                                                    'Ear Tag ',
                                                     style: TextStyle(
                                                       color: Color(0xff20212B),
                                                       fontSize: 10,
@@ -540,7 +504,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-
                         const Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
@@ -556,21 +519,25 @@ class _BerandaScreenState extends State<BerandaScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        for (int i = 1; i <= 10; i++)
-                          Card(
-                            color: Colors.white,
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 16),
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: ListTile(
-                              title: Text('Card $i'),
-                              subtitle: Text('This is the content of card $i.'),
-                            ),
+                        Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Column(
+                            children: [
+                              for (int i = 1; i <= 3; i++)
+                                CattleCard(
+                                  cattleName: 'Cattle $i',
+                                  iotId: 'IoT ID $i',
+                                  breedAndWeight: 'Breed $i, 100kg',
+                                  lastVaccinate: 'Last Vaccinate $i',
+                                  status: 'Sick',
+                                  statusIcon: PhosphorIconsRegular.ear,
+                                  healthStatus: 'Healthy',
+                                  temperature: '37',
+                                ),
+                            ],
                           ),
-                        const SizedBox(height: 100),
+                        ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -597,8 +564,7 @@ class DotWithText extends StatelessWidget {
   final Color color;
   final String text;
 
-  const DotWithText({required this.color, required this.text, Key? key})
-      : super(key: key);
+  const DotWithText({required this.color, required this.text, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -621,6 +587,149 @@ class DotWithText extends StatelessWidget {
           style: const TextStyle(fontSize: 11),
         ),
       ],
+    );
+  }
+}
+
+class CattleCard extends StatelessWidget {
+  final String cattleName;
+  final String iotId;
+  final String breedAndWeight;
+  final String lastVaccinate;
+  final String status;
+  final IconData statusIcon;
+  final String healthStatus;
+  final String temperature;
+
+  const CattleCard({
+    super.key,
+    required this.cattleName,
+    required this.iotId,
+    required this.breedAndWeight,
+    required this.lastVaccinate,
+    required this.status,
+    required this.statusIcon,
+    required this.healthStatus,
+    required this.temperature,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom:20.0),
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 150, // Set the maximum width for the text
+                        child: Text(
+                          cattleName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                          overflow: TextOverflow
+                              .ellipsis, // This adds "..." at the end if text overflows
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(left: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF20A577),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          status,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF20A577),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x1A000000),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0,
+                        )
+                      ],
+                    ),
+                    child: const Icon(Icons.hearing_rounded, color: Colors.white),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'IoT ID : $iotId',
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                breedAndWeight,
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                'Last Vaccinate : $lastVaccinate',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.monitor_heart_outlined,
+                          color: Colors.black),
+                      const SizedBox(width: 4),
+                      Text(healthStatus),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Row(
+                    children: [
+                      const Icon(Icons.thermostat_outlined, color: Colors.black),
+                      const SizedBox(width: 4),
+                      Text('$temperature°C'),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

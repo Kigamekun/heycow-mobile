@@ -6,6 +6,7 @@ class MPPDropdown extends StatefulWidget {
   final double borderWidth;
   final List<Map<String, dynamic>>? dropdownItems;
   final Function(String?)? onChanged;
+  final String? initialValue; // Add an optional initialValue parameter
 
   const MPPDropdown({
     Key? key,
@@ -14,6 +15,7 @@ class MPPDropdown extends StatefulWidget {
     this.borderWidth = 1.0,
     this.dropdownItems,
     this.onChanged,
+    this.initialValue, // Initialize the initialValue parameter
   }) : super(key: key);
 
   @override
@@ -22,6 +24,14 @@ class MPPDropdown extends StatefulWidget {
 
 class _MPPDropdownState extends State<MPPDropdown> {
   String? selectedId;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the selectedId based on initialValue
+    selectedId = widget.initialValue;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -59,9 +69,11 @@ class _MPPDropdownState extends State<MPPDropdown> {
                 }
               });
             },
-            decoration: const InputDecoration(
-              contentPadding: EdgeInsets.all(8.0),
-              border: InputBorder.none,
+            decoration: InputDecoration(
+              filled: true, // Enables the fill color
+              fillColor: Colors.white, // Sets the background color to white
+              contentPadding: const EdgeInsets.all(8.0),
+              border: InputBorder.none, // Removes the default border
             ),
           ),
         ),

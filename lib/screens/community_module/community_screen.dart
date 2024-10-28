@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/controllers/auth_controller.dart';
-import 'package:heycowmobileapp/widgets/mpp_textfield.dart';
 
 class CommunityScreen extends StatefulWidget {
   static const routeName = '/beranda';
@@ -15,7 +13,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color(0xFFEAEBED),
       body: Stack(
@@ -25,7 +22,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                   Stack(
+                  Stack(
                     children: [
                       Column(
                         children: [
@@ -139,7 +136,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                     ],
                                   ),
                                 ),
-
                                 // Comment
                                 const Padding(
                                   padding:
@@ -149,9 +145,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                     style: TextStyle(fontSize: 14),
                                   ),
                                 ),
-
                                 const SizedBox(height: 10),
-
                                 // Image
                                 ClipRRect(
                                   child: Image.network(
@@ -161,7 +155,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                     width: double.infinity,
                                   ),
                                 ),
-
                                 // Like and comment row
                                 const Padding(
                                   padding: EdgeInsets.all(16.0),

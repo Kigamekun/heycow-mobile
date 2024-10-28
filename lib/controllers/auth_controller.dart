@@ -20,8 +20,8 @@ class AuthController extends GetxController {
 
   var email = ''.obs;
   var nama = ''.obs;
-  var nik = ''.obs;
-  var noWA = ''.obs;
+  var farmName = ''.obs;
+  var phone = ''.obs;
   var password = ''.obs;
   var ulangiPassword = ''.obs;
   var avatar = ''.obs;
@@ -51,20 +51,16 @@ class AuthController extends GetxController {
     }
   }
 
-  // payload schema for register and update profile
   Map<String, String> generateFieldsMapUpdate() {
     return {
-      'identity_number': nik.value,
       'name': nama.value,
       'email': email.value,
       'provider': 'mobile',
-      'phone_number': noWA.value,
+      'phone_number': phone.value,
     };
   }
 
   void getUser() async {
-    print('dsadsa');
-
     try {
       final response = await http.get(
         Uri.parse(AppConstants.userUrl),
@@ -75,9 +71,11 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         handleSuccessfulGetUser(response.body);
       } else {
+
         handleErrorResponse(response.body);
       }
     } catch (e) {
+
       handleNetworkError(e);
     }
   }
@@ -98,18 +96,13 @@ class AuthController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        print('BERHASIL LOGIN');
-
         // Parse the response body if it's JSON
-       handleSuccessfulLogin(response.body);
+        handleSuccessfulLogin(response.body);
 
         Get.offAll(() => const MainScreen());
       } else {
-        print('GAGAL LOGIN');
-
         // Parse the response body in case of error
         var errorData = jsonDecode(response.body);
-        print('Error Response Body: $errorData');
 
         handleErrorResponse(errorData);
       }
@@ -137,10 +130,6 @@ class AuthController extends GetxController {
       String encodedString =
           base64.encode(utf8.encode('$googleToken-$epochTime'));
 
-      print('google token: $googleToken');
-      print('epoch time: $epochTime');
-      print('Encoded String: $encodedString');
-
       final response = await http.post(
         Uri.parse('${AppConstants.loginWithGoogleUrl}?key=$encodedString'),
         body: jsonEncode(fields),
@@ -167,8 +156,6 @@ class AuthController extends GetxController {
       fields.remove('identity_number');
     }
 
-    print(jsonEncode(fields));
-
     try {
       final response = await http.post(
         Uri.parse(AppConstants.registerUrl),
@@ -186,8 +173,6 @@ class AuthController extends GetxController {
   }
 
   void activation(int digits) async {
-    print(digits);
-    print(accessToken);
     try {
       final response = await http.post(
         Uri.parse(AppConstants.activationUrl),
@@ -209,7 +194,6 @@ class AuthController extends GetxController {
   }
 
   Future<void> uploadAvatar(image) async {
-    print('errprrrr: starto');
     final uri = Uri.parse(AppConstants.avatarUrl);
 
     var request = http.MultipartRequest('PUT', uri)
@@ -226,17 +210,14 @@ class AuthController extends GetxController {
 
     try {
       var response = await http.Response.fromStream(await request.send());
-      print('errprrrr: ${response.statusCode}');
       if (response.statusCode == 200) {
         Get.back();
         Get.snackbar('success', 'Avatar successfully updated');
         getUser();
       } else {
-        print('errprrrr: ellsee ${response.body}');
         handleErrorResponse(response.body);
       }
     } catch (e) {
-      print('errprrrr: $e');
       handleNetworkError(e);
     }
   }
@@ -275,16 +256,13 @@ class AuthController extends GetxController {
         },
       );
       if (response.statusCode == 200) {
-        print('refresh token oke');
         handleSuccessfulLogin(response.body);
         return true;
       } else {
-        print('refresh token  not oke');
         await logout();
         return false;
       }
     } catch (e) {
-      print('refresh token not not oke');
       await logout();
       return false;
     }
@@ -298,7 +276,6 @@ class AuthController extends GetxController {
   }
 
   Future<void> signInWithGoogle() async {
-    print('im in');
     try {
       await googleSignIn.signOut();
       final GoogleSignInAccount? googleSignInAccount =
@@ -316,16 +293,11 @@ class AuthController extends GetxController {
             await _auth.signInWithCredential(credential);
         if (userCredential != null) {
           // Handle successful sign-in
-          print('user info: $userCredential');
-          print('user info (id): ${userCredential.user!.uid}');
-          print('user info (username): ${userCredential.user!.displayName}');
-          print('user info (email): ${userCredential.user!.email}');
 
           loginWithGoogle(userCredential.user!.uid, userCredential.user!.email,
               userCredential.user!.displayName);
         } else {
           // Handle sign-in failure
-          print('Sign-in failed: $userCredential');
           handleErrorResponse(userCredential.toString());
           // Display an error message or try again
         }
@@ -342,55 +314,27 @@ class AuthController extends GetxController {
         'fcm_token': token,
       };
 
-      print('field $fields');
-
       final response = await http.post(Uri.parse(AppConstants.firebaseUrl),
           headers: <String, String>{'Authorization': 'Bearer $accessToken'},
           body: jsonEncode(fields));
 
-      print('response ${response.body}');
       if (response.statusCode == 200) {
-        print('FCM saved to internal...');
-      } else {
-        print('FCM Failed connect to internal...');
-      }
+      } else {}
     } catch (e) {
       handleNetworkError('A network error occurred: $e');
     }
   }
 
-  // payload schema for register and update profile
   Map<String, String> generateFieldsMap() {
     return {
-      'identity_number': nik.value.isEmpty ? '' : nik.value,
       'name': nama.value,
       'email': email.value,
       'password': password.value,
       'password_confirmation': ulangiPassword.value,
       'provider': 'mobile',
-      'phone_number': noWA.value,
+      'phone_number': phone.value,
     };
   }
-
-  // internal helper
-  // bool validate() {
-  //   final fields = generateFieldsMap();
-
-  //   final emptyFields = <String>[];
-  //   fields.forEach((key, value) {
-  //     if (value.isEmpty || value.trim().isEmpty) {
-  //       emptyFields.add(key);
-  //     }
-  //   });
-
-  //   if (emptyFields.isNotEmpty) {
-  //     final emptyFieldsString = emptyFields.join(', ');
-  //     Get.snackbar(
-  //         'Fields tidak boleh kosong', 'Mohon diisi: $emptyFieldsString');
-  //     return false; // Validation failed
-  //   }
-  //   return true; // Validation passed
-  // }
 
   void sendActivation() async {
     try {
@@ -414,44 +358,33 @@ class AuthController extends GetxController {
   void handleSuccessfulGetUser(String responseBody) {
     try {
       final dynamic jsonResponse = jsonDecode(responseBody);
-      print('jsonResponse: $jsonResponse');
 
       if (jsonResponse != null) {
-        final dynamic data = jsonResponse['data'];
-        print('datass: $data');
-        if (data['activation_time'] == null) {
-          sendActivation();
-        }
+        final dynamic data = jsonResponse;
 
         if (data != null && data is Map<String, dynamic>) {
           nama.value = data['name'] ?? '';
           email.value = data['email'] ?? '';
-          nik.value = data['identity_number_decoded'] ?? '';
-          noWA.value = data['phone_number'] ?? '';
-          avatar.value = data['avatar'] ?? '';
+          phone.value = data['phone_number'] ?? '';
+          farmName.value = data['farmName'] ?? '';
           avatarUrl.value = data['avatar'] == '' ? '' : data['avatar_url'];
           return;
         }
       }
     } catch (e) {
-      print('Error: $e');
       Get.snackbar('Error', 'An error occurred while processing data');
     }
 
     Get.snackbar('Error', 'Failed to parse the response');
   }
 
-  
-   void handleSuccessfulLogin(String responseBody) {
+  void handleSuccessfulLogin(String responseBody) {
     try {
       final dynamic jsonResponse = jsonDecode(responseBody);
-      print('jsonResponse: $jsonResponse');
 
       if (jsonResponse != null) {
-
         if (jsonResponse != null && jsonResponse is Map<String, dynamic>) {
           final dynamic user = jsonResponse['user'];
-          print('user: $user');
 
           if (user != null && user is Map<String, dynamic>) {
             accessToken.value = jsonResponse['access_token'] ?? '';
@@ -460,6 +393,8 @@ class AuthController extends GetxController {
 
             nama.value = user['name'] ?? '';
             email.value = user['email'] ?? '';
+            phone.value = user['phone_number'] ?? '';
+            farmName.value = user['farmName'] ?? '';
 
             isLoggedIn.value = true;
             storeToken();
@@ -469,27 +404,21 @@ class AuthController extends GetxController {
         }
       }
     } catch (e) {
-      print('Error: $e');
       Get.snackbar('Error', 'An error occurred while processing data');
     }
 
     Get.snackbar('Error', 'Failed to parse the response');
   }
 
-
-
   void handleSuccessfulRegistration(String responseBody) {
     try {
       final dynamic jsonResponse = jsonDecode(responseBody);
-      print('jsonResponse: $jsonResponse');
 
       if (jsonResponse != null) {
         final dynamic data = jsonResponse['data'];
-        print('data: $data');
 
         if (data != null && data is Map<String, dynamic>) {
           final dynamic user = data['user'];
-          print('user: $user');
 
           if (user != null && user is Map<String, dynamic>) {
             accessToken.value = data['access_token'] ?? '';
@@ -498,8 +427,7 @@ class AuthController extends GetxController {
 
             nama.value = user['name'] ?? '';
             email.value = user['email'] ?? '';
-            nik.value = user['identity_number'] ?? '';
-            noWA.value = user['phone_number'] ?? '';
+            phone.value = user['phone'] ?? '';
 
             isLoggedIn.value = true;
             Get.to(() => const SuccessRegisterScreen());
@@ -508,7 +436,6 @@ class AuthController extends GetxController {
         }
       }
     } catch (e) {
-      print('Error: $e');
       Get.snackbar('Error', 'An error occurred while processing data');
     }
 
@@ -520,8 +447,6 @@ class AuthController extends GetxController {
       final dynamic errorResponse = jsonDecode(responseBody);
       if (errorResponse != null && errorResponse is Map<String, dynamic>) {
         final errorMessage = errorResponse['message'];
-        print('errorMessage');
-        print(errorMessage);
         final List<dynamic> errorData = errorResponse['data'] ?? [];
         String snackBarMessage = '';
 
@@ -537,14 +462,11 @@ class AuthController extends GetxController {
         Get.snackbar('Error', 'Unknown error occurred');
       }
     } catch (e) {
-      print('e');
-      print(e);
       Get.snackbar('Error', 'An error occurred: $e');
     }
   }
 
   void handleNetworkError(dynamic error) {
-    print('A network error occurred: $error');
     Get.snackbar('Error', 'A network error occurred: $error');
   }
 
