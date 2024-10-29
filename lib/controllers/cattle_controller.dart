@@ -21,18 +21,11 @@ class CattleController extends GetxController {
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
       );
-
       if (response.statusCode == 200) {
         log('ada disini');
-
-        // Decode and log the entire response to check structure
         final jsonResponse = jsonDecode(response.body);
         log('Response JSON: $jsonResponse');
-
-        // Access and validate the nested data structure
         final jsonData = jsonResponse['data']?['data'];
-
-        // Check if jsonData is null or not a List
         if (jsonData == null || jsonData.isEmpty) {
           log('No cattle items found or jsonData is empty.');
           cattleItems.assignAll([]); // Assign an empty list to cattleItems
@@ -41,8 +34,6 @@ class CattleController extends GetxController {
           log('Error: Expected jsonData to be a list but got ${jsonData.runtimeType}');
           return;
         }
-
-        // Map JSON data to a list of Cattle objects
         final List<Cattle> items = jsonData.map<Cattle>((item) {
           return Cattle(
             id: item['id'],
@@ -70,18 +61,15 @@ class CattleController extends GetxController {
                 : null,
           );
         }).toList();
-
-        // Assign to cattleItems
         cattleItems.assignAll(items);
         log('Cattle Items fetched successfully: $cattleItems');
       } else {
         log('Failed to load cattle items. Status code: ${response.statusCode}');
-        cattleItems
-            .assignAll([]); // Ensure cattleItems is empty if the request fails
+        cattleItems.assignAll([]);
       }
     } catch (e) {
       log('Error fetching cattle items: $e');
-      cattleItems.assignAll([]); // Ensure cattleItems is empty on error
+      cattleItems.assignAll([]);
     }
   }
 
@@ -89,10 +77,8 @@ class CattleController extends GetxController {
     try {
       final response =
           await http.get(Uri.parse('${AppConstants.cattleUrl}/$id'));
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = jsonDecode(response.body)['data'];
-
         Cattle cattleItem = Cattle(
           id: jsonData['id'],
           name: jsonData['name'],
@@ -147,7 +133,6 @@ class CattleController extends GetxController {
           "type": cattle.type,
         }),
       );
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         log('Cattle saved successfully');
         fetchCattleItems(); // Refresh cattle list after saving
@@ -158,7 +143,6 @@ class CattleController extends GetxController {
       log('Error saving cattle: $e');
     }
   }
-
   Future<void> updateCattle(Cattle cattle) async {
     log("MASUK SINI S HRSNYA");
     log(cattle.breedId.toString());
@@ -179,7 +163,6 @@ class CattleController extends GetxController {
           "type": cattle.type,
         }),
       );
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         log('Cattle update successfully');
         fetchCattleItems(); // Refresh cattle list after saving
@@ -190,11 +173,8 @@ class CattleController extends GetxController {
       log('Error saving cattle: $e');
     }
   }
-
-  // Delete cattle by ID
   Future<void> deleteCattle(int id) async {
     try {
-      // log(`id``);
       log("id: $id");
       final response = await http.delete(
           Uri.parse('${AppConstants.cattleUrl}/$id'),
@@ -202,7 +182,6 @@ class CattleController extends GetxController {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${_authController.accessToken}',
           });
-
       if (response.statusCode == 200) {
         log('Cattle deleted successfully');
         fetchCattleItems(); // Refresh cattle list after deletion
@@ -219,19 +198,18 @@ class CattleController extends GetxController {
       final response = await http.get(
         Uri.parse(AppConstants.breedUrl),
         headers: <String, String>{
+            'Content-Type': 'application/json',
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
       );
       if (response.statusCode == 200) {
         log('ada disini');
-
         // Decode and check if 'data' is indeed a list
         final jsonData = jsonDecode(response.body)['data'];
         if (jsonData is! List) {
           log('Error: Expected a list but got ${jsonData.runtimeType}');
           return;
         }
-
         log("MASOKZ:");
         // Map JSON data to a list of Cattle objects
         final List<Breed> items = jsonData.map((item) {
@@ -240,21 +218,20 @@ class CattleController extends GetxController {
             name: item['name'],
           );
         }).toList();
-
         breedItems.assignAll(items);
         log('Breed Items fetched successfully: $cattleItems');
       } else {
-        log('Failed to load cattle items. Status code: ${response.statusCode}');
+        log('Failed to load breeds items. Status code: ${response.body}');
       }
     } catch (e) {
-      log('Error fetching cattle items: $e');
+      log('Error fetching breeds items: $e');
     }
   }
 
   Future<void> assignIOTDevice(int id, String serial_number) async {
     log("MASUK SINI DL HRSNYA");
     try {
-      final response = await http.post(
+      final response = await http.patch(
         Uri.parse(AppConstants.cattleUrl + '/assign-iot-devices/$id'),
         headers: {
           'Content-Type': 'application/json',
@@ -264,10 +241,9 @@ class CattleController extends GetxController {
           "iot_device_id": serial_number,
         }),
       );
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         log('iot device saved successfully');
-        fetchCattleItems(); // Refresh cattle list after saving
+        fetchCattleItems();
       } else {
         log('Failed to save cattle. Status code: ${response.body}');
       }
@@ -279,13 +255,12 @@ class CattleController extends GetxController {
   Future<void> removeIotDevice(int id) async {
     try {
       log("masuk sins");
-      final response = await http.post(
+      final response = await http.delete(
           Uri.parse('${AppConstants.cattleUrl}/remove-iot-devices/$id'),
           headers: <String, String>{
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${_authController.accessToken}',
           });
-
       if (response.statusCode == 200) {
         log('Cattle deleted successfully');
         fetchCattleItems(); // Refresh cattle list after deletion
@@ -306,47 +281,15 @@ class CattleController extends GetxController {
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
       );
-
       if (response.statusCode == 200) {
         log('Successfully fetched cattle details.');
-
-        // Decode and log the entire response to check structure
         final jsonResponse = jsonDecode(response.body);
         log('Response JSON: $jsonResponse');
-
-        // Access the data for the specific cattle
         final jsonData = jsonResponse['data'];
-
-        // Check if jsonData is null
         if (jsonData == null) {
           log('Cattle details not found.');
           return null;
         }
-
-        // // Map JSON data to a Cattle object
-        // final Cattle cattle = Cattle(
-        //   id: jsonData['id'],
-        //   name: jsonData['name'],
-        //   breed: jsonData['breed'] != null ? jsonData['breed']['name'] : null,
-        //   status: jsonData['status'],
-        //   breedId: jsonData['breed']?['id'],
-        //   gender: jsonData['gender'],
-        //   type: jsonData['type'],
-        //   birthDate: jsonData['birth_date'],
-        //   birthWeight: jsonData['birth_weight'],
-        //   birthHeight: jsonData['birth_height'],
-        //   image: "",
-        //   iotDevice: jsonData['iot_device']['id'] != null
-        //       ? IoTDevice(
-        //           id: jsonData['iot_device']['id'],
-        //           serialNumber: jsonData['iot_device']['serial_number'],
-        //           status: jsonData['iot_device']['status'],
-        //           installationDate: jsonData['iot_device']['installation_date'],
-        //           qrImage: "",
-        //         )
-        //       : null,
-        // );
-
         final Cattle cattle = Cattle(
           id: jsonData['id'],
           name: jsonData['name'] ??
@@ -365,7 +308,7 @@ class CattleController extends GetxController {
           birthHeight: jsonData['birth_height'] ??
               0, // Use 0 or another default for null
           image: "",
-          iotDeviceId : jsonData['iot_device_id'],
+          iotDeviceId: jsonData['iot_device_id'],
           iotDevice: jsonData['iot_device'] != null &&
                   jsonData['iot_device']['id'] != null
               ? IoTDevice(
@@ -379,7 +322,6 @@ class CattleController extends GetxController {
                 )
               : null,
         );
-
         return cattle;
       } else {
         log('Failed to fetch cattle details. Status code: ${response.statusCode}');

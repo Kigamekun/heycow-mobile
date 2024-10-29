@@ -33,8 +33,6 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
         _cattle = updatedCattle as Cattle;
       });
 
-
-
       print("BERESSS");
       print(_cattle.iotDeviceId);
     } catch (e) {
@@ -101,15 +99,6 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Text(
-                              //   'Information',
-                              //   style: TextStyle(
-                              //     fontSize: 18,
-                              //     fontWeight: FontWeight.bold,
-                              //   ),
-                              // ),
-                              // SizedBox(height: 100),
-
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
@@ -177,7 +166,8 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                   const SizedBox(height: 8),
                                   Text(
                                     'IoT ID : ' +
-                                        (_cattle.iotDeviceId?.toString() ??
+                                        (_cattle.iotDevice?.serialNumber
+                                                ?.toString() ??
                                             'N/A'),
                                     style: const TextStyle(
                                       color: Colors.grey,
@@ -320,8 +310,11 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                   _buildTableRow(
                                       'Gender', _cattle.gender as String),
                                   _buildTableRow('Vaccine', 'Vaccine 1'),
-                                  _buildTableRow('ID Device',
-                                      _cattle.iotDeviceId?.toString() ?? 'N/A'),
+                                  _buildTableRow(
+                                      'ID Device',
+                                      (_cattle.iotDevice?.serialNumber
+                                              ?.toString() ??
+                                          'N/A')),
                                   _buildTableRow('Battery', '87%'),
                                 ],
                               ),

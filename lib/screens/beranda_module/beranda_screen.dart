@@ -104,138 +104,81 @@ class _BerandaScreenState extends State<BerandaScreen> {
                         left: 16,
                         right: 16,
                         child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x33959DA5),
-                                blurRadius: 24,
-                                offset: Offset(0, 8),
-                                spreadRadius: 0,
-                              )
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Information',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              SizedBox(
-                                width: double
-                                    .infinity, // Membuat tombol full width
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xffBD1919),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          10), // Rounded corners
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x33959DA5),
+                                  blurRadius: 24,
+                                  offset: Offset(0, 8),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                // Alert section
+
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: const Text(
+                                        'Alert',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    // Implement Upgrade Action
-                                  },
-                                  child: const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 12.0),
-                                    child: Text(
-                                      'There are 3 cattle sick, check them now!',
+                                    const Text(
+                                      'Ada 1 sapi yang sakit',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: Colors
-                                            .white, // Mengubah warna teks menjadi putih
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    // Expanded pertama dengan flex 5
-                                    Expanded(
-                                      flex: 5,
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: double
-                                                .infinity, // Memastikan tombol mengisi seluruh lebar
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    const Color(0xffFACC15),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5), // Rounded corners
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                // Aksi tombol pertama
-                                              },
-                                              child: const Text(
-                                                'Basic Plan Until 30-06-2024',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors
-                                                      .white, // Mengubah warna teks menjadi putih
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                    Container(
+                                      child: const Icon(
+                                        Icons.keyboard_arrow_right_rounded,
+                                        color: Colors.red,
+                                        size: 30,
                                       ),
-                                    ),
-                                    const SizedBox(width: 20),
-                                    // Expanded kedua dengan flex 2
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: double
-                                                .infinity, // Memastikan tombol mengisi seluruh lebar
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    const Color(0xff20A577),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5), // Rounded corners
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                // Aksi tombol kedua
-                                              },
-                                              child: const Text(
-                                                'Upgrade',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors
-                                                      .white, // Mengubah warna teks menjadi putih
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                    )
                                   ],
                                 ),
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
+                                Divider(
+                                  color: Colors.grey[300],
+                                  thickness: 1,
+                                ),
+
+                                const SizedBox(height: 30),
+
+                                // Icon Buttons
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _buildPngIconButton(
+                                        'assets/contract.png', 'Contract'),
+                                    _buildPngIconButton(
+                                        'assets/history.png', 'History'),
+                                    _buildPngIconButton(
+                                        'assets/request.png', 'Request'),
+                                  ],
+                                ),
+                              ],
+                            )),
                       ),
                     ],
                   ),
@@ -520,7 +463,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                         ),
                         const SizedBox(height: 20),
                         Padding(
-                          padding: EdgeInsets.all(15),
+                          padding: const EdgeInsets.all(15),
                           child: Column(
                             children: [
                               for (int i = 1; i <= 3; i++)
@@ -550,6 +493,26 @@ class _BerandaScreenState extends State<BerandaScreen> {
       ),
     );
   }
+}
+
+Widget _buildPngIconButton(String assetPath, String label) {
+  return Column(
+    children: [
+      Image.asset(
+        assetPath,
+        width: 20,
+        height: 20,
+      ),
+      const SizedBox(height: 8),
+      Text(
+        label,
+        style: const TextStyle(
+          fontSize: 12,
+          color: Colors.black,
+        ),
+      ),
+    ],
+  );
 }
 
 class _SalesData {
@@ -616,7 +579,7 @@ class CattleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom:20.0),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -679,7 +642,8 @@ class CattleCard extends StatelessWidget {
                         )
                       ],
                     ),
-                    child: const Icon(Icons.hearing_rounded, color: Colors.white),
+                    child:
+                        const Icon(Icons.hearing_rounded, color: Colors.white),
                   ),
                 ],
               ),
@@ -719,7 +683,8 @@ class CattleCard extends StatelessWidget {
                   const SizedBox(width: 16),
                   Row(
                     children: [
-                      const Icon(Icons.thermostat_outlined, color: Colors.black),
+                      const Icon(Icons.thermostat_outlined,
+                          color: Colors.black),
                       const SizedBox(width: 4),
                       Text('$temperature°C'),
                     ],

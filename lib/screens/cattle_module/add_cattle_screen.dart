@@ -52,7 +52,11 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
   @override
   void initState() {
     super.initState();
-    cattleController.fetchBreedItems();
+    cattleController.fetchBreedItems().then((_) {
+      setState(() {
+        // Triggers rebuild after breed items are fetched
+      });
+    });
     filteredBreeds = cattleController.breedItems;
     _searchController.addListener(_filterBreeds);
     _dateController.text =
@@ -134,32 +138,47 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(height: 16),
-                                  // Dropdown for selecting breed
-                                  MPPDropdown(
-                                    controller: TextEditingController(),
-                                    label: 'Jenis Sapi*',
-                                    dropdownItems: cattleController.breedItems
-                                        .map((breed) => {
-                                              'id': breed.id,
-                                              'label': breed.name,
-                                            })
-                                        .toList(),
+                                  const Text('Jenis Sapi*',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      )),
+                                  const SizedBox(height: 10),
+                                  
+                                  DropdownButtonFormField<String>(
+                                    items: cattleController.breedItems
+                                        .map((breed) {
+                                      return DropdownMenuItem<String>(
+                                        value: breed.id.toString(),
+                                        child: Text(breed.name),
+                                      );
+                                    }).toList(),
                                     onChanged: (value) {
                                       setState(() {
-                                        selectedBreed = value != null
-                                            ? cattleController.breedItems
-                                                .firstWhere((breed) =>
-                                                    breed.id.toString() ==
-                                                    value)
-                                            : null;
+                                        selectedBreed = cattleController
+                                            .breedItems
+                                            .firstWhere(
+                                          (breed) =>
+                                              breed.id.toString() == value,
+                                          orElse: () => Breed(id: 0, name: ''),
+                                        );
                                       });
                                     },
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Pilih Ras Sapi',
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xFF20A577)),
+                                      ),
+                                    ),
                                   ),
+
                                   const SizedBox(height: 16),
                                   const Text('Tanggal Lahir Sapi*',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
                                   GestureDetector(
@@ -169,23 +188,13 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                         controller:
                                             _dateController, // Use controller
                                         decoration: const InputDecoration(
-                                          labelText: 'Tanggal Lahir Sapi',
                                           suffixIcon:
                                               Icon(Icons.calendar_today),
-                                          border: OutlineInputBorder(),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Color(0xFF20A577)),
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.red),
-                                          ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.red),
-                                          ),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 1,
+                                                  color: Color.fromRGBO(
+                                                      219, 218, 218, 1))),
                                         ),
                                       ),
                                     ),
@@ -193,7 +202,10 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   const SizedBox(height: 16),
                                   // Type Dropdown
                                   const Text('Tipe Sapi*',
-                                      style: TextStyle(fontSize: 16)),
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      )),
                                   const SizedBox(height: 10),
                                   DropdownButtonFormField<String>(
                                     items: [
@@ -224,7 +236,10 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   const SizedBox(height: 16),
                                   // Health Status Dropdown
                                   const Text('Status Kesehatan*',
-                                      style: TextStyle(fontSize: 16)),
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      )),
                                   const SizedBox(height: 10),
                                   DropdownButtonFormField<String>(
                                     items: [
@@ -253,7 +268,8 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   const SizedBox(height: 16),
                                   const Text('Tinggi Sapi*',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                          fontSize: 13,
+                                        fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
                                   // Tinggi Sapi
@@ -287,7 +303,8 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   const SizedBox(height: 16),
                                   const Text('Berat Sapi*',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                          fontSize: 13,
+                                        fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
                                   // Berat Terakhir Sapi
@@ -322,7 +339,8 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   // Kelamin Sapi
                                   const Text('Kelamin Sapi*',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                          fontSize: 13,
+                                        fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
                                   Row(
@@ -372,7 +390,8 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                             type: selectedType ?? '',
                                             status: healthStatus,
                                             birthHeight: tinggiSapi.toInt(),
-                                            image: 'image_url', // Replace with actual image path or URL
+                                            image:
+                                                'image_url', // Replace with actual image path or URL
                                           );
                                           // Call the saveCattle function
                                           cattleController

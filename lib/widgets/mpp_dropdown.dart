@@ -37,13 +37,6 @@ class _MPPDropdownState extends State<MPPDropdown> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: const TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          ),
-        ),
         Container(
           decoration: BoxDecoration(
             border: Border.all(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/models/cattle.dart';
+import 'package:heycowmobileapp/screens/cattle_module/detail_contract_screen.dart';
 import 'package:heycowmobileapp/screens/cattle_module/pengangon_list_screen.dart'; // Import your controller
 import 'package:get/get.dart';
 
@@ -200,6 +201,8 @@ class PengangonDetailScreen extends StatelessWidget {
                                               ),
                                             ),
                                             onPressed: () {
+                      Get.to(() =>   DetailContractScreen());
+
                                               // Aksi tombol kedua
                                             },
                                             child: const Text(

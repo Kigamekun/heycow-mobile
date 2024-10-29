@@ -38,7 +38,12 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
   @override
   void initState() {
     super.initState();
-    cattleController.fetchBreedItems();
+    cattleController.fetchBreedItems().then((_) {
+      setState(() {
+        // Set the initial state for breed dropdown after data is fetched
+      });
+    });
+
     filteredBreeds = cattleController.breedItems;
     _searchController.addListener(_filterBreeds);
 
@@ -47,6 +52,7 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
       // Set breed
       jenisSapi = widget.cattle!.breedId.toString();
 
+      // Initialize other fields based on widget.cattle
       selectedDate = DateTime.parse(widget.cattle!.birthDate as String);
       _dateController.text =
           "${selectedDate.day}-${selectedDate.month}-${selectedDate.year}";
@@ -104,7 +110,7 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('Tambah Ternak',
+        title: const Text('Edit Ternak',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -155,33 +161,51 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 16),
-                                // Dropdown for selecting breed
-                                MPPDropdown(
-                                  controller: TextEditingController(),
-                                  label: 'Jenis Sapi*',
-                                  initialValue:
-                                      jenisSapi, // Set the initial value
-                                  dropdownItems:
+                                const Text('Jenis Sapi*',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
+                                const SizedBox(height: 10),
+
+                                DropdownButtonFormField<String>(
+                                  value:
+                                      jenisSapi, // Set initial value based on widget.cattle
+                                  items:
                                       cattleController.breedItems.map((breed) {
-                                    return {
-                                      'id': breed.id,
-                                      'label': breed.name,
-                                    };
+                                    return DropdownMenuItem<String>(
+                                      value: breed.id.toString(),
+                                      child: Text(breed.name),
+                                    );
                                   }).toList(),
                                   onChanged: (value) {
                                     setState(() {
-                                      selectedBreed = value != null
-                                          ? cattleController.breedItems
-                                              .firstWhere((breed) =>
-                                                  breed.id.toString() == value)
-                                          : null;
+                                      jenisSapi = value
+                                          as String; // Update jenisSapi with the selected breed ID
+                                      selectedBreed = cattleController
+                                          .breedItems
+                                          .firstWhere(
+                                        (breed) => breed.id.toString() == value,
+                                        orElse: () => Breed(id: 0, name: ''),
+                                      );
                                     });
                                   },
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Pilih Ras Sapi',
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Color(0xFF20A577)),
+                                    ),
+                                  ),
                                 ),
+
                                 const SizedBox(height: 16),
                                 const Text('Tanggal Lahir Sapi*',
-                                    style: TextStyle(fontSize: 16)),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
                                 const SizedBox(height: 10),
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
@@ -190,7 +214,6 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                                       controller:
                                           _dateController, // Use controller
                                       decoration: const InputDecoration(
-                                        labelText: 'Tanggal Lahir Sapi',
                                         suffixIcon: Icon(Icons.calendar_today),
                                         border: OutlineInputBorder(),
                                         focusedBorder: OutlineInputBorder(
@@ -212,7 +235,10 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                                 const SizedBox(height: 16),
                                 // Type Dropdown
                                 const Text('Tipe Sapi*',
-                                    style: TextStyle(fontSize: 16)),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
                                 const SizedBox(height: 10),
                                 DropdownButtonFormField<String>(
                                   value:
@@ -245,7 +271,10 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                                 const SizedBox(height: 16),
                                 // Health Status Dropdown
                                 const Text('Status Kesehatan*',
-                                    style: TextStyle(fontSize: 16)),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
                                 const SizedBox(height: 10),
                                 DropdownButtonFormField<String>(
                                   value:
@@ -275,7 +304,10 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 const Text('Tinggi Sapi*',
-                                    style: TextStyle(fontSize: 16)),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
                                 const SizedBox(height: 10),
                                 // Tinggi Sapi
                                 TextField(
@@ -303,7 +335,10 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 const Text('Berat Sapi*',
-                                    style: TextStyle(fontSize: 16)),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
                                 const SizedBox(height: 10),
                                 // Berat Sapi
                                 TextField(
@@ -331,7 +366,10 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 const Text('Kelamin Sapi*',
-                                    style: TextStyle(fontSize: 16)),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
                                 const SizedBox(height: 10),
                                 DropdownButtonFormField<String>(
                                   value:
