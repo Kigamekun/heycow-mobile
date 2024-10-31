@@ -1,6 +1,6 @@
 class AppConstants {
-  // static const String baseURL = 'http://192.168.100.63:8000/api/'; //production
-  static const String baseURL = 'https://heycow.my.id/api/'; //production
+  static const String baseURL = 'http://192.168.1.8:8000/api/'; //production
+  // static const String baseURL = 'https://heycow.my.id/api/'; //production
   // auth module
   static const String loginUrl = '${baseURL}auth/login';
   static const String refreshTokenUrl = '${baseURL}auth/refresh_token';
@@ -18,6 +18,7 @@ class AppConstants {
   static const String configUrl = '${baseURL}webconfig';
   // cattle
   static const String cattleUrl = '${baseURL}cattle';
+  static const String blogUrl = '${baseURL}blog-posts';
   static const String breedUrl = '${baseURL}breeds';
   static const String searchIOTDevices = '${baseURL}cattle/iot-devices/search';
   // berita
