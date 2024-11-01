@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/screens/cattle_module/pengangon_detail_screen.dart';
 import 'package:get/get.dart';
-
-
+import 'package:heycowmobileapp/controllers/pengangon_controller.dart';
+import 'package:heycowmobileapp/models/pengangon.dart';
 class PengangonListScreen extends StatefulWidget {
   static const routeName = '/beranda';
 
@@ -13,6 +13,14 @@ class PengangonListScreen extends StatefulWidget {
 }
 
 class _PengangonListScreenState extends State<PengangonListScreen> {
+  final PengangonController _pengangonController = Get.put(PengangonController());
+
+  @override
+  void initState() {
+    super.initState();
+    _pengangonController.fetchPengangonItems();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +28,7 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 90),
+            padding: const EdgeInsets.only(bottom: 0),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -34,8 +42,8 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Color(0xff20A577), // Top color
-                                  Color(0xff64CFAA), // Bottom color
+                                  Color(0xff20A577),
+                                  Color(0xff64CFAA),
                                 ],
                                 stops: [0.1, 0.5],
                               ),
@@ -44,7 +52,7 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                                 bottomRight: Radius.circular(40),
                               ),
                             ),
-                            height: 250, // Height of the gradient container
+                            height: 250,
                             width: double.infinity,
                           ),
                           const SizedBox(height: 55),
@@ -81,16 +89,15 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                                           hintText:
                                               "Search Cattle Name or Device ID",
                                           hintStyle: TextStyle(
-                                            color: Colors.grey, // Text color
+                                            color: Colors.grey,
                                           ),
-                                          border: InputBorder
-                                              .none, // Remove the underline border
+                                          border: InputBorder.none,
                                         ),
                                       ),
                                     ),
                                     Icon(
                                       Icons.search,
-                                      color: Colors.black, // Search icon color
+                                      color: Colors.black,
                                     ),
                                   ],
                                 )
@@ -104,35 +111,30 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                   const Padding(
                     padding:
                         EdgeInsets.only(left: 10, right: 10, top: 0.0),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "List Peternak ",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF20212B),
-                                  ),
-                                ),
-                                // Button
-                              ],
-                            ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 16),
+                        child: Text(
+                          "List Peternak ",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF20212B),
                           ),
                         ),
-                        SizedBox(height: 20),
-                        // List of Cattle
-                        CustomCard(),
-                        SizedBox(height: 100),
-                      ],
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  Obx(() {
+                    return Column(
+                      children: _pengangonController.pengangonItems
+                          .map((pengangon) => CustomCard(pengangon: pengangon))
+                          .toList(),
+                    );
+                  }),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -144,10 +146,14 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
 }
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({super.key});
+  final Pengangon pengangon;
+
+  const CustomCard({super.key, required this.pengangon});
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
@@ -169,56 +175,65 @@ class CustomCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile Image
+                // Avatar Image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: Image.network(
-                    'https://via.placeholder.com/80', // Replace with the actual image URL
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
+                  child: pengangon.avatar != null
+                      ? Image.network(
+                          pengangon.avatar!,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.network(
+                          'https://via.placeholder.com/80',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
                 ),
                 const SizedBox(width: 16),
 
                 // Details Column
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Mamat Suramat',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        width: screenWidth * 0.5,
+                        child: Text(
+                          pengangon.name ?? 'Unknown',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
-                        'Reksa\'s Farm',
-                        style: TextStyle(
+                        pengangon.address ?? 'Unknown address',
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
-                        'Lorem Ipsum is simply dummy text of the printing and.',
-                        style: TextStyle(fontSize: 14),
+                        pengangon.bio ?? 'No bio available.',
+                        style: const TextStyle(fontSize: 14),
                       ),
-                      SizedBox(height: 16),
-
-                      // Star Rating
                     ],
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
-                  children: [
+                Row(
+                  children: const [
                     Icon(Icons.star, color: Colors.amber, size: 30),
                     Icon(Icons.star, color: Colors.amber, size: 30),
                     Icon(Icons.star, color: Colors.amber, size: 30),
@@ -227,25 +242,22 @@ class CustomCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  width: 120, // Memastikan tombol mengisi seluruh lebar
+                  width: 120,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff20A577),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(5), // Rounded corners
+                        borderRadius: BorderRadius.circular(5),
                       ),
                     ),
                     onPressed: () {
-                      // Aksi tombol kedua
-                      Get.to(() =>  const PengangonDetailScreen());
+                      Get.to(() => const PengangonDetailScreen());
                     },
                     child: const Text(
                       'Pilih',
                       style: TextStyle(
                         fontSize: 12,
-                        color:
-                            Colors.white, // Mengubah warna teks menjadi putih
+                        color: Colors.white,
                       ),
                     ),
                   ),

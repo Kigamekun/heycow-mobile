@@ -7,9 +7,15 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
 import 'package:heycowmobileapp/controllers/beranda_controller.dart';
+import 'package:heycowmobileapp/models/cattle.dart';
+import 'package:heycowmobileapp/screens/cattle_module/cattle_detail_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:http/http.dart' as http;
+import 'package:heycowmobileapp/app/constants_variable.dart';
+
+import 'dart:convert';
 
 class BerandaScreen extends StatefulWidget {
   static const routeName = '/beranda';
@@ -23,32 +29,18 @@ class BerandaScreen extends StatefulWidget {
 class _BerandaScreenState extends State<BerandaScreen> {
   final AuthController _authController = Get.find<AuthController>();
 
-  final BerandaController berandaController = Get.find<BerandaController>();
-
-  final TextEditingController _searchController = TextEditingController();
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
-  late CameraPosition _kGooglePlex;
-
   int _selectedIndex = 0; // To keep track of selected index
 
-  List<_SalesData> data = [
-    _SalesData('Jan', 20, const Color(0xffBD1919)),
-    _SalesData('Mar', 40, const Color(0XFFFACC15)),
-    _SalesData('Apr', 40, const Color(0xFF20A577)),
-  ];
+  int cattleSick = 0;
+  int cattleHealthy = 0;
+  int cattleDead = 0;
+  int iotDevices = 0;
+  int pengangon = 0;
+  String farm = '';
+  int cattleCount = 0;
+  List<dynamic> cattle = [];
 
-  void redirectToMapApp(double latitude, double longitude) async {
-    final Uri url = Uri.parse(
-        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  void setCameraPosition() {}
+  List<_SalesData> data = [];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -57,8 +49,43 @@ class _BerandaScreenState extends State<BerandaScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchDataFromApi();
+  }
+
+  // Method untuk mengambil data dari API
+  Future<void> fetchDataFromApi() async {
+    final response = await http
+        .get(Uri.parse(AppConstants.dashboardUrl), headers: <String, String>{
+      'Authorization': 'Bearer ${_authController.accessToken}',
+    });
+    if (response.statusCode == 200) {
+      final datas = json.decode(response.body);
+      setState(() {
+        cattleSick = datas['cattle_sick'];
+        cattleHealthy = datas['cattle_healthy'];
+        cattleDead = datas['cattle_dead'];
+        iotDevices = datas['iot_devices'];
+        pengangon = datas['pengangon'];
+        farm = datas['farm']['name'];
+        cattleCount = datas['cattle_count'];
+        cattle = datas['cattle'];
+
+        data = [
+          _SalesData('Sakit', cattleDead.toDouble(), const Color(0xffBD1919)),
+          _SalesData('Sehat', cattleSick.toDouble(), const Color(0XFFFACC15)),
+          _SalesData('Mati', cattleHealthy.toDouble(), const Color(0xFF20A577)),
+        ];
+      });
+    } else {
+      // Penanganan error jika ada kesalahan saat fetch data
+      print('Failed to load data');
+    }
+  }
+
+  @override
   void dispose() {
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -119,8 +146,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
                             ),
                             child: Column(
                               children: [
-                                // Alert section
-
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -141,19 +166,17 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                         ),
                                       ),
                                     ),
-                                    const Text(
-                                      'Ada 1 sapi yang sakit',
-                                      style: TextStyle(
+                                    Text(
+                                      'Ada $cattleSick sapi yang sakit',
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Container(
-                                      child: const Icon(
-                                        Icons.keyboard_arrow_right_rounded,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
+                                    const Icon(
+                                      Icons.keyboard_arrow_right_rounded,
+                                      color: Colors.red,
+                                      size: 30,
                                     )
                                   ],
                                 ),
@@ -161,10 +184,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                   color: Colors.grey[300],
                                   thickness: 1,
                                 ),
-
                                 const SizedBox(height: 30),
-
-                                // Icon Buttons
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -226,86 +246,37 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                   ),
                                   child: Column(
                                     children: [
-                                      Center(
-                                          //Initialize the chart widget
-                                          child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20.0),
-                                        child: Container(
-                                            height: 150,
-                                            decoration: BoxDecoration(
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    blurRadius: 5.0,
-                                                    color: Colors.grey
-                                                        .withAlpha(60),
-                                                    spreadRadius: 5.0,
-                                                    offset:
-                                                        const Offset(0.0, 3.0))
-                                              ],
-                                              gradient: const RadialGradient(
-                                                  stops: <double>[
-                                                    0.9,
-                                                    0.2,
-                                                    0.2
-                                                  ],
-                                                  colors: <Color>[
-                                                    Color.fromARGB(
-                                                        255, 254, 255, 254),
-                                                    Color.fromARGB(
-                                                        255, 235, 242, 249),
-                                                    Color.fromARGB(
-                                                        255, 215, 223, 232),
-                                                  ],
-                                                  radius: 0.5,
-                                                  center: Alignment.center),
-                                              shape: BoxShape.circle,
+                                      Text(
+                                        'Cattle Status',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 145,
+                                        child: SfCircularChart(
+                                          series: <CircularSeries<_SalesData,
+                                              String>>[
+                                            DoughnutSeries<_SalesData, String>(
+                                              innerRadius: '75%',
+                                              explodeAll: true,
+                                              explode: true,
+                                              dataSource: data,
+                                              xValueMapper:
+                                                  (_SalesData sales, _) =>
+                                                      sales.year,
+                                              yValueMapper:
+                                                  (_SalesData sales, _) =>
+                                                      sales.sales,
+                                              pointColorMapper:
+                                                  (_SalesData sales, _) =>
+                                                      sales.color,
+                                              name: 'Sales',
                                             ),
-                                            child: SfCircularChart(
-                                                annotations: <CircularChartAnnotation>[
-                                                  CircularChartAnnotation(
-                                                    widget: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 50),
-                                                      child: Container(
-                                                          width: 150,
-                                                          child: const Column(
-                                                              children: <Widget>[
-                                                                Text('23%',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            22,
-                                                                        fontWeight:
-                                                                            FontWeight.bold)),
-                                                              ])),
-                                                    ),
-                                                    angle: 90,
-                                                    horizontalAlignment:
-                                                        ChartAlignment.center,
-                                                  ),
-                                                ],
-                                                series: <CircularSeries<
-                                                    _SalesData, String>>[
-                                                  DoughnutSeries<_SalesData,
-                                                      String>(
-                                                    innerRadius: '70%',
-                                                    explodeAll: true,
-                                                    explode: true,
-                                                    dataSource: data,
-                                                    xValueMapper:
-                                                        (_SalesData sales, _) =>
-                                                            sales.year,
-                                                    yValueMapper:
-                                                        (_SalesData sales, _) =>
-                                                            sales.sales,
-                                                    pointColorMapper:
-                                                        (_SalesData sales, _) =>
-                                                            sales.color,
-                                                    name: 'Sales',
-                                                  )
-                                                ])),
-                                      )),
+                                          ],
+                                        ),
+                                      ),
                                       const Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
@@ -337,21 +308,21 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      child: const Center(
+                                      child: Center(
                                         child: Padding(
-                                          padding: EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(8.0),
                                           child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
-                                              PhosphorIcon(
+                                              const PhosphorIcon(
                                                 PhosphorIconsRegular.ear,
                                                 size: 45.0,
                                                 semanticLabel: 'New Note',
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 10,
                                               ),
                                               Column(
@@ -361,15 +332,15 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    '54',
-                                                    style: TextStyle(
+                                                    iotDevices.toString(),
+                                                    style: const TextStyle(
                                                       color: Color(0xff20212B),
                                                       fontSize: 30,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
                                                   ),
-                                                  Text(
+                                                  const Text(
                                                     'Ear Tag ',
                                                     style: TextStyle(
                                                       color: Color(0xff20212B),
@@ -392,21 +363,21 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      child: const Center(
+                                      child: Center(
                                         child: Padding(
-                                          padding: EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(8.0),
                                           child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
-                                              PhosphorIcon(
+                                              const PhosphorIcon(
                                                 PhosphorIconsRegular.user,
                                                 size: 45.0,
                                                 semanticLabel: 'New Note',
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 10,
                                               ),
                                               Column(
@@ -416,15 +387,15 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    '54',
-                                                    style: TextStyle(
+                                                    pengangon.toString(),
+                                                    style: const TextStyle(
                                                       color: Color(0xff20212B),
                                                       fontSize: 30,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
                                                   ),
-                                                  Text(
+                                                  const Text(
                                                     'Pengangon',
                                                     style: TextStyle(
                                                       color: Color(0xff20212B),
@@ -466,17 +437,72 @@ class _BerandaScreenState extends State<BerandaScreen> {
                           padding: const EdgeInsets.all(15),
                           child: Column(
                             children: [
-                              for (int i = 1; i <= 3; i++)
-                                CattleCard(
-                                  cattleName: 'Cattle $i',
-                                  iotId: 'IoT ID $i',
-                                  breedAndWeight: 'Breed $i, 100kg',
-                                  lastVaccinate: 'Last Vaccinate $i',
-                                  status: 'Sick',
-                                  statusIcon: PhosphorIconsRegular.ear,
-                                  healthStatus: 'Healthy',
-                                  temperature: '37',
-                                ),
+                              for (var ctl in cattle)
+                                InkWell(
+                                    onTap: () {
+                                      // Navigasi ke halaman detail saat card diklik
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CattleDetailScreen(
+                                                  cattle: Cattle(
+                                            id: ctl['id'],
+                                            name: ctl['name'],
+                                            breed: ctl['breed'],
+                                            status: ctl['status'],
+                                            breedId: ctl['breed_id'],
+                                            gender: ctl['gender'],
+                                            type: ctl['type'],
+                                            birthDate: ctl['birth_date'],
+                                            birthWeight: ctl['birth_weight'],
+                                            birthHeight: ctl['birth_height'],
+                                            userId: ctl['user_id'],
+                                            iotDeviceId: ctl['iot_devices']['id'] ??
+                                                2,
+                                            image: ctl['image'],
+                                            iotDevice: ctl['iot_devices'] !=
+                                                    null
+                                                ? IoTDevice(
+                                                    id: ctl['iot_devices']['id'],
+                                                    serialNumber:
+                                                        ctl['iot_devices']
+                                                            ['serial_number'],
+                                                    status: ctl['iot_devices']
+                                                        ['status'],
+                                                    installationDate: ctl[
+                                                            'iot_devices']
+                                                        ['installation_date'],
+                                                    qrImage: ctl['iot_devices']
+                                                        ['qr_image'],
+                                                  )
+                                                : null,
+                                          )),
+                                        ),
+                                      );
+                                    },
+                                    child: CattleCard(
+                                      cattleName: ctl['name'] ?? 'Unknown',
+                                      iotId: (ctl['iot_devices'] != null &&
+                                              ctl['iot_devices']
+                                                      ['serial_number'] !=
+                                                  null)
+                                          ? ctl['iot_devices']['serial_number']
+                                          : 'Unknown',
+                                      breedAndWeight:
+                                          '${ctl['breed'] ?? 'Unknown'} (${ctl['birth_weight'] ?? 'Unknown'} kg)',
+                                      lastVaccinate:
+                                          ctl['last_vaccinate'] ?? 'Unknown',
+                                      status: ctl['status'] ?? 'Unknown',
+                                      statusIcon: PhosphorIconsRegular.ear,
+                                      healthStatus: ctl['latest_health_status']
+                                              ?[0]['status'] ??
+                                          'Unknown',
+                                      temperature: ctl['latest_health_status']
+                                                  ?[0]['temperature']
+                                              ?.toString() ??
+                                          'Unknown',
+                                    ))
                             ],
                           ),
                         ),
@@ -488,7 +514,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
               ),
             ),
           ),
-          // Floating Bottom Navigation Bar
         ],
       ),
     );
@@ -598,7 +623,7 @@ class CattleCard extends StatelessWidget {
                   Row(
                     children: [
                       SizedBox(
-                        width: 150, // Set the maximum width for the text
+                        width: 80, // Set the maximum width for the text
                         child: Text(
                           cattleName,
                           style: const TextStyle(

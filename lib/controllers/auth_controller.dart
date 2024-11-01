@@ -10,6 +10,7 @@ import 'package:heycowmobileapp/screens/auth_module/success_register_screen.dart
 import 'package:heycowmobileapp/screens/main_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http_parser/http_parser.dart';
 
 class AuthController extends GetxController {
@@ -61,6 +62,7 @@ class AuthController extends GetxController {
   }
 
   void getUser() async {
+    log("KESINI DULU");
     try {
       final response = await http.get(
         Uri.parse(AppConstants.userUrl),
@@ -71,10 +73,12 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         handleSuccessfulGetUser(response.body);
       } else {
-
+        log(response.body);
         handleErrorResponse(response.body);
       }
     } catch (e) {
+      log("ini e");
+      log(e.toString());
 
       handleNetworkError(e);
     }
@@ -152,17 +156,26 @@ class AuthController extends GetxController {
 
     final fields = generateFieldsMap();
 
-    if (fields['identity_number'] == '') {
-      fields.remove('identity_number');
-    }
-
     try {
+      log(nama.value);
+      log(email.value);
+      log(password.value);
       final response = await http.post(
         Uri.parse(AppConstants.registerUrl),
-        body: jsonEncode(fields),
+          headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(
+            {
+              'name': nama.value,
+              'email': email.value,
+              'password': password.value,
+            }
+        ),
       );
 
       if (response.statusCode == 200) {
+        log("MASUK SINI DULU");
         handleSuccessfulRegistration(response.body);
       } else {
         handleErrorResponse(response.body);
@@ -330,7 +343,7 @@ class AuthController extends GetxController {
       'name': nama.value,
       'email': email.value,
       'password': password.value,
-      'password_confirmation': ulangiPassword.value,
+      'password_confirmation': password.value,
       'provider': 'mobile',
       'phone_number': phone.value,
     };
@@ -358,20 +371,21 @@ class AuthController extends GetxController {
   void handleSuccessfulGetUser(String responseBody) {
     try {
       final dynamic jsonResponse = jsonDecode(responseBody);
-
       if (jsonResponse != null) {
         final dynamic data = jsonResponse;
-
         if (data != null && data is Map<String, dynamic>) {
-          nama.value = data['name'] ?? '';
-          email.value = data['email'] ?? '';
-          phone.value = data['phone_number'] ?? '';
-          farmName.value = data['farmName'] ?? '';
-          avatarUrl.value = data['avatar'] == '' ? '' : data['avatar_url'];
+          nama.value = data['name']?.toString() ?? '';
+          email.value = data['email']?.toString() ?? '';
+          phone.value = data['phone_number']?.toString() ?? '';
+          farmName.value = data['farmName']?.toString() ?? '-';
+          avatarUrl.value = (data['avatar'] != null && data['avatar'] != '')
+              ? data['avatar_url'].toString()
+              : '';
           return;
         }
       }
     } catch (e) {
+      log(e.toString());
       Get.snackbar('Error', 'An error occurred while processing data');
     }
 
@@ -410,37 +424,38 @@ class AuthController extends GetxController {
     Get.snackbar('Error', 'Failed to parse the response');
   }
 
-  void handleSuccessfulRegistration(String responseBody) {
-    try {
-      final dynamic jsonResponse = jsonDecode(responseBody);
+void handleSuccessfulRegistration(String responseBody) {
+  try {
+    log(responseBody);
+    final dynamic jsonResponse = jsonDecode(responseBody);
 
-      if (jsonResponse != null) {
-        final dynamic data = jsonResponse['data'];
+    if (jsonResponse != null && jsonResponse is Map<String, dynamic>) {
+      final dynamic data = jsonResponse['data']; // Access the 'data' directly from the root
 
-        if (data != null && data is Map<String, dynamic>) {
-          final dynamic user = data['user'];
+      if (data != null && data is Map<String, dynamic>) {
+        // Access tokens and user details
+        accessToken.value = jsonResponse['access_token'] ?? ''; // Access token is at the root level
+        // No refresh_token or token_expire_at in your response
+       
+        // Extract user details
+        nama.value = data['name'] ?? ''; 
+        email.value = data['email'] ?? '';
+        // You may want to extract phone or other user details if available in the response
+        phone.value = ''; // If phone is not included, you can leave it empty or handle it appropriately
 
-          if (user != null && user is Map<String, dynamic>) {
-            accessToken.value = data['access_token'] ?? '';
-            refreshToken.value = data['refresh_token'] ?? '';
-            tokenExpireAt.value = data['token_expire_at'] ?? '';
-
-            nama.value = user['name'] ?? '';
-            email.value = user['email'] ?? '';
-            phone.value = user['phone'] ?? '';
-
-            isLoggedIn.value = true;
-            Get.to(() => const SuccessRegisterScreen());
-            return;
-          }
-        }
+        isLoggedIn.value = true; // Update login status
+        Get.to(() => const SuccessRegisterScreen()); // Navigate to the success screen
+        return;
       }
-    } catch (e) {
-      Get.snackbar('Error', 'An error occurred while processing data');
     }
-
-    Get.snackbar('Error', 'Failed to parse the response');
+  } catch (e) {
+    log(e.toString());
+    Get.snackbar('Error', 'An error occurred while processing data');
   }
+
+  Get.snackbar('Error', 'Failed to parse the response');
+}
+
 
   void handleErrorResponse(String responseBody) {
     try {

@@ -144,7 +144,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                         fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
-                                  
+
                                   DropdownButtonFormField<String>(
                                     items: cattleController.breedItems
                                         .map((breed) {
@@ -203,7 +203,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   // Type Dropdown
                                   const Text('Tipe Sapi*',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
@@ -237,7 +237,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   // Health Status Dropdown
                                   const Text('Status Kesehatan*',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
@@ -245,6 +245,8 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                     items: [
                                       'sehat',
                                       'sakit',
+                                      'mati',
+                                      'dijual',
                                     ].map((status) {
                                       return DropdownMenuItem<String>(
                                         value: status,
@@ -268,7 +270,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   const SizedBox(height: 16),
                                   const Text('Tinggi Sapi*',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
@@ -303,7 +305,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   const SizedBox(height: 16),
                                   const Text('Berat Sapi*',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),
@@ -339,7 +341,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                   // Kelamin Sapi
                                   const Text('Kelamin Sapi*',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                       )),
                                   const SizedBox(height: 10),

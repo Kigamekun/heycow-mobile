@@ -120,8 +120,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
               alignment: Alignment.bottomCenter,
               child: MPPButton(
                 text: 'Aktivasi Akun',
-                onPressed: () =>
-                    authController.activation(getEnteredDigits()),
+                onPressed: () => authController.activation(getEnteredDigits()),
                 backgroundColor: MPPColorTheme.darkTailColor,
               ),
             ),

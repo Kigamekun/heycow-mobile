@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:heycowmobileapp/screens/auth_module/login_screen.dart';
 import 'package:heycowmobileapp/widgets/mpp_alert.dart';
 import 'package:heycowmobileapp/widgets/mpp_button.dart';
 import 'package:heycowmobileapp/widgets/mpp_image.dart';
@@ -30,24 +31,21 @@ class _SuccessRegisterScreenState extends State<SuccessRegisterScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Align(
-                alignment: Alignment.topCenter,
-                child: MPPImage(width: 150),
-              ),
+             
               const Expanded(
                 child: Center(
                     child: MPPAlert(
                         imagePath: "assets/circular-success-filled.png",
                         title: "Pendaftaran Akun Berhasil!",
                         subtitle:
-                            "Silahkan cek alamat email anda untuk proses aktivasi akun")),
+                            "Silahkan Lanjutkan Proses Login.")),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: MPPButton(
-                  text: 'Masukkan Kode Aktivasi',
-                  onPressed: () => Get.to(() => const ActivationScreen()),
-                  backgroundColor: MPPColorTheme.darkTailColor,
+                  text: 'Login Screen',
+                  onPressed: () => Get.to(() => const LoginScreen()),
+                  backgroundColor: Color(0xff20A577),
                 ),
               ),
             ],

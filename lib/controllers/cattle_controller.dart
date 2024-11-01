@@ -13,10 +13,16 @@ class CattleController extends GetxController {
 
   final AuthController _authController = Get.find<AuthController>();
 
-  Future<void> fetchCattleItems() async {
+  Future<void> fetchCattleItems({String? query}) async {
     try {
+      final url = Uri.parse(AppConstants.cattleUrl).replace(
+        queryParameters: {
+          'search': query ?? '',
+        },
+      );
+
       final response = await http.get(
-        Uri.parse(AppConstants.cattleUrl),
+        url,
         headers: <String, String>{
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
@@ -143,6 +149,7 @@ class CattleController extends GetxController {
       log('Error saving cattle: $e');
     }
   }
+
   Future<void> updateCattle(Cattle cattle) async {
     log("MASUK SINI S HRSNYA");
     log(cattle.breedId.toString());
@@ -173,6 +180,7 @@ class CattleController extends GetxController {
       log('Error saving cattle: $e');
     }
   }
+
   Future<void> deleteCattle(int id) async {
     try {
       log("id: $id");
@@ -198,7 +206,7 @@ class CattleController extends GetxController {
       final response = await http.get(
         Uri.parse(AppConstants.breedUrl),
         headers: <String, String>{
-            'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
       );

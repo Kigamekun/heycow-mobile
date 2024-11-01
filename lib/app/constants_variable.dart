@@ -9,8 +9,9 @@ class AppConstants {
   static const String registerUrl = '${baseURL}auth/register';
   static const String activationUrl = '${baseURL}auth/activated';
   static const String resetpasswordUrl = '${baseURL}auth/resetpassword';
-  static const String userUrl = '${baseURL}user';
+  static const String userUrl = '${baseURL}me';
   static const String avatarUrl = '${baseURL}user/avatar';
+  static const String dashboardUrl = '${baseURL}dashboard';
   // FCM
   static const String firebaseUrl = '${baseURL}firebase';
   // beranda
@@ -22,6 +23,22 @@ class AppConstants {
   static const String breedUrl = '${baseURL}breeds';
   static const String searchIOTDevices = '${baseURL}cattle/iot-devices/search';
   // berita
+
+
+
+
+  // pengangon
+  static const String pengangonUrl = '${baseURL}users';
+
+
+
+
+
+
+
+
+
+
   static const String beritaHomeUrl = '${baseURL}webpost/home';
   static const String beritaDetailUrl = '${baseURL}webpost';
   // tenant

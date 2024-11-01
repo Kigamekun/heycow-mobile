@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const Text("Sudah punya akun? "),
                         TextButton(
-                          onPressed: () =>  Get.to(() => const RegisterScreen()),
+                          onPressed: () => Get.to(() => const RegisterScreen()),
                           child: const Text(
                             'Register',
                             style: TextStyle(

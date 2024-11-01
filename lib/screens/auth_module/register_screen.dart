@@ -71,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
                     MPPTextField(
-                      onChanged: (value) => authController.email.value = value,
+                      onChanged: (value) => authController.nama.value = value,
                       label: 'Name',
                     ),
                     const SizedBox(height: 20),
@@ -81,13 +81,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
                     MPPTextField(
-                      onChanged: (value) => authController.email.value = value,
+                      onChanged: (value) => authController.phone.value = value,
                       label: 'Phone',
-                    ),
-                    const SizedBox(height: 20),
-                    MPPTextField(
-                      onChanged: (value) => authController.email.value = value,
-                      label: 'Farm Name',
                     ),
                     const SizedBox(height: 20),
                     MPPTextField(
@@ -113,8 +108,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
                     MPPButton(
-                      text: 'Masuk',
-                      onPressed: () => authController.login(),
+                      text: 'Register',
+                      onPressed: () => authController.register(),
                       backgroundColor: const Color(0xff20A577),
                     ),
                     const SizedBox(height: 20),

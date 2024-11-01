@@ -7,19 +7,39 @@ import 'package:heycowmobileapp/screens/cattle_module/cattle_detail_screen.dart'
 class CattleScreen extends StatefulWidget {
   static const routeName = '/beranda';
 
-  const CattleScreen({super.key});
-
+  const CattleScreen({Key? key}) : super(key: key);
   @override
-  State<CattleScreen> createState() => _CattleScreenState();
+  CattleScreenState createState() => CattleScreenState();
 }
 
-class _CattleScreenState extends State<CattleScreen> {
+class CattleScreenState extends State<CattleScreen> {
+  //
   final CattleController cattleController = Get.put(CattleController());
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    fetchCattleItems(); // Fetch initial data
+    searchController.addListener(() {
+      cattleController.fetchCattleItems(query: searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  // Method to fetch cattle items
+  void fetchCattleItems() {
     cattleController.fetchCattleItems();
+  }
+
+  // Public method to refresh cattle data
+  void refreshData() {
+    fetchCattleItems();
   }
 
   @override
@@ -77,8 +97,8 @@ class _CattleScreenState extends State<CattleScreen> {
                               )
                             ],
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -86,7 +106,8 @@ class _CattleScreenState extends State<CattleScreen> {
                                   children: [
                                     Expanded(
                                       child: TextField(
-                                        decoration: InputDecoration(
+                                        controller: searchController,
+                                        decoration: const InputDecoration(
                                           hintText:
                                               "Search Cattle Name or Device ID",
                                           hintStyle: TextStyle(
@@ -97,7 +118,7 @@ class _CattleScreenState extends State<CattleScreen> {
                                         ),
                                       ),
                                     ),
-                                    Icon(
+                                    const Icon(
                                       Icons.search,
                                       color: Colors.black, // Search icon color
                                     ),
@@ -180,7 +201,8 @@ class _CattleScreenState extends State<CattleScreen> {
                                 child: Column(
                                   children: [
                                     CattleCard(
-                                      cattleName: cattle.name ?? 'N/A', // Check for null
+                                      cattleName: cattle.name ??
+                                          'N/A', // Check for null
                                       iotId: cattle.iotDevice?.serialNumber ??
                                           'N/A', // Check for null
                                       breedAndWeight:
@@ -192,7 +214,8 @@ class _CattleScreenState extends State<CattleScreen> {
                                       temperature: '37',
                                       onDelete: () {
                                         // Delete function
-                                        cattleController.deleteCattle(cattle.id as int);
+                                        cattleController
+                                            .deleteCattle(cattle.id as int);
                                       },
                                     ),
                                     const SizedBox(height: 15),
@@ -263,7 +286,8 @@ class CattleCard extends StatelessWidget {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text("Confirm Delete"),
-              content: const Text("Are you sure you want to delete this cattle?"),
+              content:
+                  const Text("Are you sure you want to delete this cattle?"),
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
@@ -315,7 +339,12 @@ class CattleCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
-                          color: status == 'sakit' ? Colors.red : Color(0xFF20A577),
+                          color: status == 'mati'
+                              ? Colors.grey // Warna untuk status mati
+                              : status == 'sakit'
+                                  ? Colors.red // Warna untuk status sakit
+                                  : const Color(
+                                      0xFF20A577), // Warna untuk status sehat
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -332,7 +361,8 @@ class CattleCard extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                     color: iotId == 'N/A' ? Colors.red : Color(0xFF20A577),
+                      color:
+                          iotId == 'N/A' ? Colors.red : const Color(0xFF20A577),
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: const [
                         BoxShadow(
@@ -343,7 +373,8 @@ class CattleCard extends StatelessWidget {
                         )
                       ],
                     ),
-                    child: const Icon(Icons.hearing_rounded, color: Colors.white),
+                    child:
+                        const Icon(Icons.hearing_rounded, color: Colors.white),
                   ),
                 ],
               ),

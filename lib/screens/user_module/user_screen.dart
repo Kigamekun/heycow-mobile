@@ -82,7 +82,7 @@ class _UserScreenState extends State<UserScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Subscription Status',
+                                'Status Pengangon',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -90,7 +90,7 @@ class _UserScreenState extends State<UserScreen> {
                               ),
                               const SizedBox(height: 5),
                               const Text(
-                                'Basic Plan',
+                                'Tidak Aktif',
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,

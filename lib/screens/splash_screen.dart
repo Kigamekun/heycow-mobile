@@ -54,7 +54,8 @@ class _SplashScreenState extends State<SplashScreen>
           child: child,
         );
       },
-      transitionDuration: const Duration(milliseconds: 500), // Duration for the fade effect
+      transitionDuration:
+          const Duration(milliseconds: 500), // Duration for the fade effect
     ));
   }
 
@@ -91,7 +92,8 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 350), // Duration for the screen transition
+        duration: const Duration(
+            milliseconds: 350), // Duration for the screen transition
         transitionBuilder: (Widget child, Animation<double> animation) {
           // Custom transition: Slide in from bottom (for the second splash screen)
           final offsetAnimation = Tween<Offset>(
@@ -139,6 +141,7 @@ class _SplashScreenState extends State<SplashScreen>
         child: Text(
           'HeyCow',
           style: TextStyle(
+            fontFamily: 'Poppins',
             color: Colors.white,
             fontSize: 64,
             fontWeight: FontWeight.bold,

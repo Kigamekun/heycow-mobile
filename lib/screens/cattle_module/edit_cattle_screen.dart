@@ -282,6 +282,8 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
                                   items: [
                                     'sehat',
                                     'sakit',
+                                    'mati',
+                                    'dijual',
                                   ].map((status) {
                                     return DropdownMenuItem<String>(
                                       value: status,

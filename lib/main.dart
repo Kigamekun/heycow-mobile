@@ -28,19 +28,13 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // handling permission not granted for notification
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();
     }
   });
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Create an Android notification channel (if not on web)
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
@@ -50,14 +44,11 @@ void main() async {
       playSound: true,
       showBadge: true,
     );
-
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
-
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true,
@@ -65,26 +56,20 @@ void main() async {
       sound: true,
     );
   }
-
   String? tokenAdmin = await FirebaseMessaging.instance.getToken();
   saveToken(tokenAdmin);
-
   runApp(const MyApp());
 }
-
 void saveToken(String? tokenAdmin) {
   AuthController fcmController = Get.put(AuthController());
   fcmController.createFCM(tokenAdmin.toString());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Mal Pelayanan Publik Depok',
+      title: 'HeyCow Application',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: MPPColorTheme.orangeColor),
@@ -98,10 +83,9 @@ class MyApp extends StatelessWidget {
       getPages: RoutesManager.routes,
     );
   }
-
   BindingsBuilder<dynamic> initBinding() {
     return BindingsBuilder(() {
-      // Get.put(AuthController());
+      Get.put(AuthController());
       Get.put(BerandaController());
     });
   }
