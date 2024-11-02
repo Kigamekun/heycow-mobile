@@ -246,16 +246,16 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                   ),
                                   child: Column(
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Cattle Status',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       Container(
                                         height: 145,
-                                        child: SfCircularChart(
+                                        child:                           SfCircularChart(
                                           series: <CircularSeries<_SalesData,
                                               String>>[
                                             DoughnutSeries<_SalesData, String>(
@@ -495,13 +495,18 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                           ctl['last_vaccinate'] ?? 'Unknown',
                                       status: ctl['status'] ?? 'Unknown',
                                       statusIcon: PhosphorIconsRegular.ear,
-                                      healthStatus: ctl['latest_health_status']
-                                              ?[0]['status'] ??
-                                          'Unknown',
-                                      temperature: ctl['latest_health_status']
-                                                  ?[0]['temperature']
-                                              ?.toString() ??
-                                          'Unknown',
+                                      healthStatus: (ctl['latest_health_status'] != null &&
+                                              ctl['latest_health_status']
+                                                      ['status'] !=
+                                                  null)
+                                          ? ctl['latest_health_status']['status']
+                                          : 'Unknown',
+                                      temperature: (ctl['latest_health_status'] != null &&
+                                              ctl['latest_health_status']
+                                                      ['temperature'] !=
+                                                  null)
+                                          ? ctl['latest_health_status']['temperature']
+                                          : 'Unknown',
                                     ))
                             ],
                           ),
