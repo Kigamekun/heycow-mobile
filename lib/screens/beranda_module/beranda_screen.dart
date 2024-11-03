@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
 import 'package:heycowmobileapp/app/constants_variable.dart';
+import 'package:heycowmobileapp/screens/contract_module/contract_screen.dart';
 
 import 'dart:convert';
 
@@ -190,11 +191,27 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     _buildPngIconButton(
-                                        'assets/contract.png', 'Contract'),
+                                      context,
+                                      'assets/contract.png',
+                                      'Contract',
+                                      ContractScreen(),
+                                    ),
+
+                                    // History Button
                                     _buildPngIconButton(
-                                        'assets/history.png', 'History'),
+                                      context,
+                                      'assets/history.png',
+                                      'History',
+                                      ContractScreen(), // Replace with the screen for "History"
+                                    ),
+
+                                    // Request Button
                                     _buildPngIconButton(
-                                        'assets/request.png', 'Request'),
+                                      context,
+                                      'assets/request.png',
+                                      'Request',
+                                      ContractScreen(), // Replace with the screen for "Request"
+                                    ),
                                   ],
                                 ),
                               ],
@@ -255,7 +272,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       ),
                                       Container(
                                         height: 145,
-                                        child:                           SfCircularChart(
+                                        child: SfCircularChart(
                                           series: <CircularSeries<_SalesData,
                                               String>>[
                                             DoughnutSeries<_SalesData, String>(
@@ -458,13 +475,14 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                             birthWeight: ctl['birth_weight'],
                                             birthHeight: ctl['birth_height'],
                                             userId: ctl['user_id'],
-                                            iotDeviceId: ctl['iot_devices']['id'] ??
-                                                2,
+                                            iotDeviceId:
+                                                ctl['iot_devices']['id'] ?? 2,
                                             image: ctl['image'],
                                             iotDevice: ctl['iot_devices'] !=
                                                     null
                                                 ? IoTDevice(
-                                                    id: ctl['iot_devices']['id'],
+                                                    id: ctl['iot_devices']
+                                                        ['id'],
                                                     serialNumber:
                                                         ctl['iot_devices']
                                                             ['serial_number'],
@@ -495,18 +513,24 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                           ctl['last_vaccinate'] ?? 'Unknown',
                                       status: ctl['status'] ?? 'Unknown',
                                       statusIcon: PhosphorIconsRegular.ear,
-                                      healthStatus: (ctl['latest_health_status'] != null &&
-                                              ctl['latest_health_status']
-                                                      ['status'] !=
-                                                  null)
-                                          ? ctl['latest_health_status']['status']
-                                          : 'Unknown',
-                                      temperature: (ctl['latest_health_status'] != null &&
-                                              ctl['latest_health_status']
-                                                      ['temperature'] !=
-                                                  null)
-                                          ? ctl['latest_health_status']['temperature']
-                                          : 'Unknown',
+                                      healthStatus:
+                                          (ctl['latest_health_status'] !=
+                                                      null &&
+                                                  ctl['latest_health_status']
+                                                          ['status'] !=
+                                                      null)
+                                              ? ctl['latest_health_status']
+                                                  ['status']
+                                              : 'Unknown',
+                                      temperature:
+                                          (ctl['latest_health_status'] !=
+                                                      null &&
+                                                  ctl['latest_health_status']
+                                                          ['temperature'] !=
+                                                      null)
+                                              ? ctl['latest_health_status']
+                                                  ['temperature']
+                                              : 'Unknown',
                                     ))
                             ],
                           ),
@@ -525,23 +549,52 @@ class _BerandaScreenState extends State<BerandaScreen> {
   }
 }
 
-Widget _buildPngIconButton(String assetPath, String label) {
-  return Column(
-    children: [
-      Image.asset(
-        assetPath,
-        width: 20,
-        height: 20,
-      ),
-      const SizedBox(height: 8),
-      Text(
-        label,
-        style: const TextStyle(
-          fontSize: 12,
-          color: Colors.black,
+// Widget _buildPngIconButton(String assetPath, String label) {
+//   return Column(
+//     children: [
+//       Image.asset(
+//         assetPath,
+//         width: 20,
+//         height: 20,
+//       ),
+//       const SizedBox(height: 8),
+//       Text(
+//         label,
+//         style: const TextStyle(
+//           fontSize: 12,
+//           color: Colors.black,
+//         ),
+//       ),
+//     ],
+//   );
+// }
+
+Widget _buildPngIconButton(BuildContext context, String assetPath, String label,
+    Widget destinationScreen) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => destinationScreen),
+      );
+    },
+    child: Column(
+      children: [
+        Image.asset(
+          assetPath,
+          width: 20,
+          height: 20,
         ),
-      ),
-    ],
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.black,
+          ),
+        ),
+      ],
+    ),
   );
 }
 

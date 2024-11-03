@@ -4,6 +4,7 @@ import 'package:heycowmobileapp/screens/cattle_module/detail_contract_screen.dar
 import 'package:heycowmobileapp/screens/cattle_module/pengangon_list_screen.dart'; // Import your controller
 import 'package:get/get.dart';
 import 'package:heycowmobileapp/screens/beranda_module/beranda_screen.dart';
+import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
 import 'package:heycowmobileapp/screens/main_screen.dart'; // Import MainScreen
 
 class DetailContractScreen extends StatelessWidget {
@@ -148,7 +149,7 @@ class DetailContractScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               onPressed: () {
-                                                Get.offAll(() => MainScreen()); // Navigate to MainScreen
+                                                Get.to(() => SnapScreen()); // Navigate to MainScreen
                                               },
                                               child: const Text(
                                                 'Tutup',

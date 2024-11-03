@@ -1,5 +1,5 @@
 class AppConstants {
-  static const String baseURL = 'http://192.168.1.8:8000/api/'; //production
+  static const String baseURL = 'https://heycow.my.id/api/'; //production
   // static const String baseURL = 'https://heycow.my.id/api/'; //production
   // auth module
   static const String loginUrl = '${baseURL}auth/login';

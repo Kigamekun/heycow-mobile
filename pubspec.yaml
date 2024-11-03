@@ -53,6 +53,7 @@ dependencies:
   phosphor_flutter: ^2.1.0
   qr_code_scanner: ^1.0.1
   flutter_typeahead: ^4.0.0
+  webview_flutter: ^4.10.0
 
 
 dev_dependencies:
