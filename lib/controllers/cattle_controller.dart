@@ -155,7 +155,7 @@ class CattleController extends GetxController {
     log(cattle.breedId.toString());
     try {
       final response = await http.put(
-        Uri.parse(AppConstants.cattleUrl + '/${cattle.id}'),
+        Uri.parse('${AppConstants.cattleUrl}/${cattle.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${_authController.accessToken}',
@@ -236,17 +236,17 @@ class CattleController extends GetxController {
     }
   }
 
-  Future<void> assignIOTDevice(int id, String serial_number) async {
+  Future<void> assignIOTDevice(int id, String serialNumber) async {
     log("MASUK SINI DL HRSNYA");
     try {
       final response = await http.patch(
-        Uri.parse(AppConstants.cattleUrl + '/assign-iot-devices/$id'),
+        Uri.parse('${AppConstants.cattleUrl}/assign-iot-devices/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
         body: jsonEncode({
-          "iot_device_id": serial_number,
+          "iot_device_id": serialNumber,
         }),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {

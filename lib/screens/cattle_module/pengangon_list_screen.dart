@@ -185,12 +185,16 @@ class CustomCard extends StatelessWidget {
                           height: 80,
                           fit: BoxFit.cover,
                         )
-                      : Image.network(
-                          'https://via.placeholder.com/80',
+                      : Container(
                           width: 80,
                           height: 80,
-                          fit: BoxFit.cover,
-                        ),
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.person,
+                            color: Colors.grey,
+                            size: 40,
+                          ),
+                      ),
                 ),
                 const SizedBox(width: 16),
 

@@ -149,7 +149,7 @@ class DetailContractScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               onPressed: () {
-                                                Get.to(() => SnapScreen()); // Navigate to MainScreen
+                                               Get.offAll(() => MainScreen()); // Navigate to MainScreen
                                               },
                                               child: const Text(
                                                 'Tutup',

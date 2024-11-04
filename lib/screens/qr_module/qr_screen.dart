@@ -41,7 +41,23 @@ class _QRScreenState extends State<QRScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QR Code Scanner'),
+        iconTheme: const IconThemeData(
+          color: Colors.white, // Set tombol back menjadi putih
+        ),
+        title: const Text('Scan Cattle',
+            style: TextStyle(color: Colors.white, fontSize: 16)),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF20A577), // Start color
+                Color(0xFF64CFAA), // End color
+              ],
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [

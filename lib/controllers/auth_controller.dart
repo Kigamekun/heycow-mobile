@@ -62,7 +62,6 @@ class AuthController extends GetxController {
   }
 
   void getUser() async {
-    log("KESINI DULU");
     try {
       final response = await http.get(
         Uri.parse(AppConstants.userUrl),
@@ -100,15 +99,15 @@ class AuthController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        // Parse the response body if it's JSON
         handleSuccessfulLogin(response.body);
-
         Get.offAll(() => const MainScreen());
       } else {
-        // Parse the response body in case of error
-        var errorData = jsonDecode(response.body);
+        Get.snackbar('Error', 'Username atau Password salah.');
 
-        handleErrorResponse(errorData);
+        // // Parse the response body in case of error
+        // var errorData = jsonDecode(response.body);
+
+        // handleErrorResponse(errorData);
       }
     } catch (e) {
       handleNetworkError(e);
@@ -162,16 +161,14 @@ class AuthController extends GetxController {
       log(password.value);
       final response = await http.post(
         Uri.parse(AppConstants.registerUrl),
-          headers: {
+        headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(
-            {
-              'name': nama.value,
-              'email': email.value,
-              'password': password.value,
-            }
-        ),
+        body: jsonEncode({
+          'name': nama.value,
+          'email': email.value,
+          'password': password.value,
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -424,38 +421,41 @@ class AuthController extends GetxController {
     Get.snackbar('Error', 'Failed to parse the response');
   }
 
-void handleSuccessfulRegistration(String responseBody) {
-  try {
-    log(responseBody);
-    final dynamic jsonResponse = jsonDecode(responseBody);
+  void handleSuccessfulRegistration(String responseBody) {
+    try {
+      log(responseBody);
+      final dynamic jsonResponse = jsonDecode(responseBody);
 
-    if (jsonResponse != null && jsonResponse is Map<String, dynamic>) {
-      final dynamic data = jsonResponse['data']; // Access the 'data' directly from the root
+      if (jsonResponse != null && jsonResponse is Map<String, dynamic>) {
+        final dynamic data =
+            jsonResponse['data']; // Access the 'data' directly from the root
 
-      if (data != null && data is Map<String, dynamic>) {
-        // Access tokens and user details
-        accessToken.value = jsonResponse['access_token'] ?? ''; // Access token is at the root level
-        // No refresh_token or token_expire_at in your response
-       
-        // Extract user details
-        nama.value = data['name'] ?? ''; 
-        email.value = data['email'] ?? '';
-        // You may want to extract phone or other user details if available in the response
-        phone.value = ''; // If phone is not included, you can leave it empty or handle it appropriately
+        if (data != null && data is Map<String, dynamic>) {
+          // Access tokens and user details
+          accessToken.value = jsonResponse['access_token'] ??
+              ''; // Access token is at the root level
+          // No refresh_token or token_expire_at in your response
 
-        isLoggedIn.value = true; // Update login status
-        Get.to(() => const SuccessRegisterScreen()); // Navigate to the success screen
-        return;
+          // Extract user details
+          nama.value = data['name'] ?? '';
+          email.value = data['email'] ?? '';
+          // You may want to extract phone or other user details if available in the response
+          phone.value =
+              ''; // If phone is not included, you can leave it empty or handle it appropriately
+
+          isLoggedIn.value = true; // Update login status
+          Get.to(() =>
+              const SuccessRegisterScreen()); // Navigate to the success screen
+          return;
+        }
       }
+    } catch (e) {
+      log(e.toString());
+      Get.snackbar('Error', 'An error occurred while processing data');
     }
-  } catch (e) {
-    log(e.toString());
-    Get.snackbar('Error', 'An error occurred while processing data');
+
+    Get.snackbar('Error', 'Failed to parse the response');
   }
-
-  Get.snackbar('Error', 'Failed to parse the response');
-}
-
 
   void handleErrorResponse(String responseBody) {
     try {

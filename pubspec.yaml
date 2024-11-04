@@ -54,6 +54,9 @@ dependencies:
   qr_code_scanner: ^1.0.1
   flutter_typeahead: ^4.0.0
   webview_flutter: ^4.10.0
+  http: ^1.2.2
+  image_picker: ^0.8.5+3
+  dio: ^5.0.0
 
 
 dev_dependencies:

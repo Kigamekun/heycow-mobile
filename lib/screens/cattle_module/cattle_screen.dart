@@ -343,8 +343,11 @@ class CattleCard extends StatelessWidget {
                               ? Colors.grey // Warna untuk status mati
                               : status == 'sakit'
                                   ? Colors.red // Warna untuk status sakit
-                                  : const Color(
-                                      0xFF20A577), // Warna untuk status sehat
+                                  : status == 'dijual'
+                                      ? Colors
+                                          .yellow // Warna untuk status dijual
+                                      : const Color(
+                                          0xFF20A577), // Warna untuk status sehat
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(

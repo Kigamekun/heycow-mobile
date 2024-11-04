@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
 import 'package:get/get.dart';
 
-class ContractDetailScreen extends StatelessWidget {
+class HistoryDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,9 +28,6 @@ class ContractDetailScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Gradient Header
-
-          // Main Content
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -66,11 +63,11 @@ class ContractDetailScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Colors.amber,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Text(
-                            'Approved',
+                            'On Going',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

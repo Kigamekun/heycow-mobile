@@ -7,8 +7,11 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
 import 'package:heycowmobileapp/controllers/beranda_controller.dart';
+import 'package:heycowmobileapp/controllers/cattle_controller.dart';
 import 'package:heycowmobileapp/models/cattle.dart';
 import 'package:heycowmobileapp/screens/cattle_module/cattle_detail_screen.dart';
+import 'package:heycowmobileapp/screens/history_module/history_screen.dart';
+import 'package:heycowmobileapp/screens/request_module/request_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -29,6 +32,7 @@ class BerandaScreen extends StatefulWidget {
 
 class _BerandaScreenState extends State<BerandaScreen> {
   final AuthController _authController = Get.find<AuthController>();
+  final CattleController cattleController = Get.put(CattleController());
 
   int _selectedIndex = 0; // To keep track of selected index
 
@@ -53,6 +57,12 @@ class _BerandaScreenState extends State<BerandaScreen> {
   void initState() {
     super.initState();
     fetchDataFromApi();
+    fetchCattleItems();
+  }
+
+  // Method to fetch cattle items
+  void fetchCattleItems() {
+    cattleController.fetchCattleItems();
   }
 
   // Method untuk mengambil data dari API
@@ -202,7 +212,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       context,
                                       'assets/history.png',
                                       'History',
-                                      ContractScreen(), // Replace with the screen for "History"
+                                      HistoryScreen(), // Replace with the screen for "History"
                                     ),
 
                                     // Request Button
@@ -210,7 +220,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       context,
                                       'assets/request.png',
                                       'Request',
-                                      ContractScreen(), // Replace with the screen for "Request"
+                                      RequestScreen(), // Replace with the screen for "Request"
                                     ),
                                   ],
                                 ),
@@ -278,7 +288,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                             DoughnutSeries<_SalesData, String>(
                                               innerRadius: '75%',
                                               explodeAll: true,
-                                              explode: true,
+                                              explode: false,
                                               dataSource: data,
                                               xValueMapper:
                                                   (_SalesData sales, _) =>
@@ -451,89 +461,49 @@ class _BerandaScreenState extends State<BerandaScreen> {
                         ),
                         const SizedBox(height: 20),
                         Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(
-                            children: [
-                              for (var ctl in cattle)
-                                InkWell(
-                                    onTap: () {
-                                      // Navigasi ke halaman detail saat card diklik
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CattleDetailScreen(
-                                                  cattle: Cattle(
-                                            id: ctl['id'],
-                                            name: ctl['name'],
-                                            breed: ctl['breed'],
-                                            status: ctl['status'],
-                                            breedId: ctl['breed_id'],
-                                            gender: ctl['gender'],
-                                            type: ctl['type'],
-                                            birthDate: ctl['birth_date'],
-                                            birthWeight: ctl['birth_weight'],
-                                            birthHeight: ctl['birth_height'],
-                                            userId: ctl['user_id'],
-                                            iotDeviceId:
-                                                ctl['iot_devices']['id'] ?? 2,
-                                            image: ctl['image'],
-                                            iotDevice: ctl['iot_devices'] !=
-                                                    null
-                                                ? IoTDevice(
-                                                    id: ctl['iot_devices']
-                                                        ['id'],
-                                                    serialNumber:
-                                                        ctl['iot_devices']
-                                                            ['serial_number'],
-                                                    status: ctl['iot_devices']
-                                                        ['status'],
-                                                    installationDate: ctl[
-                                                            'iot_devices']
-                                                        ['installation_date'],
-                                                    qrImage: ctl['iot_devices']
-                                                        ['qr_image'],
-                                                  )
-                                                : null,
-                                          )),
-                                        ),
-                                      );
-                                    },
-                                    child: CattleCard(
-                                      cattleName: ctl['name'] ?? 'Unknown',
-                                      iotId: (ctl['iot_devices'] != null &&
-                                              ctl['iot_devices']
-                                                      ['serial_number'] !=
-                                                  null)
-                                          ? ctl['iot_devices']['serial_number']
-                                          : 'Unknown',
-                                      breedAndWeight:
-                                          '${ctl['breed'] ?? 'Unknown'} (${ctl['birth_weight'] ?? 'Unknown'} kg)',
-                                      lastVaccinate:
-                                          ctl['last_vaccinate'] ?? 'Unknown',
-                                      status: ctl['status'] ?? 'Unknown',
-                                      statusIcon: PhosphorIconsRegular.ear,
-                                      healthStatus:
-                                          (ctl['latest_health_status'] !=
-                                                      null &&
-                                                  ctl['latest_health_status']
-                                                          ['status'] !=
-                                                      null)
-                                              ? ctl['latest_health_status']
-                                                  ['status']
-                                              : 'Unknown',
-                                      temperature:
-                                          (ctl['latest_health_status'] !=
-                                                      null &&
-                                                  ctl['latest_health_status']
-                                                          ['temperature'] !=
-                                                      null)
-                                              ? ctl['latest_health_status']
-                                                  ['temperature']
-                                              : 'Unknown',
-                                    ))
-                            ],
-                          ),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Obx(() {
+                            if (cattleController.cattleItems.isEmpty) {
+                              return const Center(
+                                child: Text('No cattle available.'),
+                              );
+                            }
+                            return Column(
+                              children:
+                                  cattleController.cattleItems.map((cattle) {
+                                return InkWell(
+                                  onTap: () {
+                                    // Navigasi ke halaman detail saat card diklik
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CattleDetailScreen(cattle: cattle),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    children: [
+                                      CattleCard(
+                                        cattleName: cattle.name ??
+                                            'N/A', // Check for null
+                                        iotId: cattle.iotDevice?.serialNumber ??
+                                            'N/A', // Check for null
+                                        breedAndWeight:
+                                            '${cattle.breed} (${cattle.birthWeight} kg)',
+                                        lastVaccinate: '12',
+                                        status: cattle.status,
+                                        statusIcon: Icons.check_circle,
+                                        healthStatus: 'Healthy',
+                                        temperature: '37',
+                                      ),
+                                      const SizedBox(height: 15),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          }),
                         ),
                         const SizedBox(height: 20),
                       ],
@@ -697,7 +667,15 @@ class CattleCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF20A577),
+                          color: status == 'mati'
+                              ? Colors.grey // Warna untuk status mati
+                              : status == 'sakit'
+                                  ? Colors.red // Warna untuk status sakit
+                                  : status == 'dijual'
+                                      ? Colors
+                                          .yellow // Warna untuk status dijual
+                                      : const Color(
+                                          0xFF20A577), // Warna untuk status sehat
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -714,7 +692,8 @@ class CattleCard extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF20A577),
+                      color:
+                          iotId == 'N/A' ? Colors.red : const Color(0xFF20A577),
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: const [
                         BoxShadow(

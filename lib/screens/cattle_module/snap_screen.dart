@@ -26,15 +26,30 @@ class _SnapScreenState extends State<SnapScreen> {
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted) // Enable JavaScript
     // getSnapToken(); // Fetch the Snap token
-     ..loadRequest(Uri.parse("https://heycow.my.id/api/transactions/create-charge"));
+     ..loadRequest(Uri.parse("https://heycow.my.id/transactions/create-charge"));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Midtrans Payment'),
+        iconTheme: const IconThemeData(
+          color: Colors.white, // Set tombol back menjadi putih
+        ),
+        title: const Text('Contract Payment',
+            style: TextStyle(color: Colors.white, fontSize: 16)),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF20A577), // Start color
+                Color(0xFF64CFAA), // End color
+              ],
+            ),
+          ),
+        ),
       ),
       body: WebViewWidget(controller: controller),
     );

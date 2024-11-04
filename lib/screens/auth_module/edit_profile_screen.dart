@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart';
+import 'package:heycowmobileapp/controllers/auth_controller.dart';
 
-import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -11,26 +15,81 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  String jenisSapi = '';
-  DateTime selectedDate = DateTime.now();
-  double tinggiSapi = 0;
-  double beratSapi = 0;
-  String kelaminSapi = '';
-  bool sudahVaksin = false;
+  final ImagePicker _picker = ImagePicker();
+  
+  File? _selectedImage;
 
   // Helper to pick date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       setState(() {
-        selectedDate = picked;
+        // selectedDate = picked;
       });
     }
+  }
+
+  // Function to pick image from gallery
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Function to submit form data along with image
+  Future<void> _submitForm() async {
+    
+    if (_formKey.currentState!.validate()) {
+      // final formData = dio.FormData.fromMap({
+      //   "nama": "Mulyadi", // Add other form fields here
+      //   "email": "mulyadi@ymail.com",
+      //   "phone_number": "+1 234-567-890",
+      //   "farm_name": "Mulyadi Farm",
+      //   "profile_picture": _selectedImage != null
+      //       ? await dio.MultipartFile.fromFile(_selectedImage!.path,
+      //           filename: _selectedImage!.path.split('/').last)
+      //       : null,
+      // });
+
+      try {
+        final dio = Dio();
+        final response = await dio.post(
+          'https://your-api-url.com/updateProfile', // Ganti dengan URL API Anda
+          data: {
+            "nama": "Mulyadi", // Add other form fields here
+            "email": "",
+            "phone_number": "+1 234-567-890",
+            "farm_name": "Mulyadi Farm",
+            "profile_picture": _selectedImage != null
+                ? null
+                : null,
+          },
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile updated: ${response.data}')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating profile: $e')),
+        );
+      }
+    }
+  }
+   final AuthController _authController = Get.find<AuthController>();
+
+
+  @override
+  void initState() {
+    super.initState();
+    _authController.getUser(); // Call the getUserData method
   }
 
   @override
@@ -38,9 +97,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(
-          color: Colors.white, // Set tombol back menjadi putih
+          color: Colors.white,
         ),
-        title: const Text('Tambah Ternak',
+        title: const Text('Edit Profile',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -48,8 +107,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xFF20A577), // Start color
-                Color(0xFF64CFAA), // End color
+                Color(0xFF20A577),
+                Color(0xFF64CFAA),
               ],
             ),
           ),
@@ -65,119 +124,91 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const AlertBox(),
                     Padding(
                       padding: const EdgeInsets.only(right: 15, left: 15),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 16),
-                          // Jenis Sapi
-
                           Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x33959DA5),
-                                    blurRadius: 24,
-                                    offset: Offset(0, 8),
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Column(
-                                      children: [
-                                        const CircleAvatar(
-                                          radius: 50,
-                                          backgroundImage: AssetImage(
-                                              'assets/pp.png'), // Replace with your image path
-                                        ),
-                                        const SizedBox(height: 10),
-                                        TextButton(
-                                          onPressed: () {
-                                            // Logic for updating profile picture
-                                          },
-                                          child: const Text(
-                                            'Edit Profile Picture',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x33959DA5),
+                                  blurRadius: 24,
+                                  offset: Offset(0, 8),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: _selectedImage != null
+                                            ? FileImage(_selectedImage!)
+                                            : const AssetImage(
+                                                'assets/pp.png',
+                                              ) as ImageProvider,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      TextButton(
+                                        onPressed: _pickImage,
+                                        child: const Text(
+                                          'Edit Profile Picture',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 30),
+                                _buildTextField(
+                                    label: 'Nama',
+                                    initialValue: _authController.nama.value),
+                                const SizedBox(height: 20),
+                                _buildTextField(
+                                    label: 'Email',
+                                    initialValue: _authController.email.value),
+                                const SizedBox(height: 20),
+                                _buildTextField(
+                                    label: 'Phone Number',
+                                    initialValue: _authController.phone.value),
+                                const SizedBox(height: 20),
+                                _buildTextField(
+                                    label: 'Farm Name',
+                                    initialValue: _authController.farmName.value),
+                                const SizedBox(height: 40),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: _submitForm,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF20A577),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                    ),
+                                    child: const Text(
+                                      'Submit',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
                                     ),
                                   ),
-
-                                  const SizedBox(height: 30),
-
-                                  // Username Field
-                                  _buildTextField(
-                                      label: 'Username',
-                                      initialValue: 'Mulyadi'),
-
-                                  const SizedBox(height: 20),
-
-                                  // Email Field
-                                  _buildTextField(
-                                      label: 'Email',
-                                      initialValue: 'mulyadi@ymail.vom'),
-
-                                  const SizedBox(height: 20),
-
-                                  // Phone Number Field
-                                  _buildTextField(
-                                      label: 'Phone Number',
-                                      initialValue: '+1 234-567-890'),
-
-                                  const SizedBox(height: 20),
-
-                                  // Farm Name Field
-                                  _buildTextField(
-                                      label: 'Farm Name',
-                                      initialValue: 'Mulyadi Farm'),
-
-                                  const SizedBox(height: 40),
-
-                                  const SizedBox(height: 16),
-                                  // Submit button
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        if (_formKey.currentState!.validate()) {
-                                          // Handle form submission
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                                content: Text(
-                                                    'Data Ternak berhasil disubmit')),
-                                          );
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFF20A577),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                      ),
-                                      child: const Text(
-                                        'Submit',
-                                        style: TextStyle(
-                                            fontSize: 16, color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )),
+                                ),
+                              ],
+                            ),
+                          ),
                           const SizedBox(height: 60),
                         ],
                       ),
@@ -187,11 +218,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           ),
-          // Floating Bottom Navigation Bar
         ],
       ),
     );
   }
+
 }
 
 // AlertBox widget

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/screens/contract_module/contract_detail_screen.dart';
 
-class ContractScreen extends StatelessWidget {
+class RequestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,7 +9,7 @@ class ContractScreen extends StatelessWidget {
         iconTheme: const IconThemeData(
           color: Colors.white, // Set tombol back menjadi putih
         ),
-        title: const Text('Contract',
+        title: const Text('Request',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -33,18 +33,10 @@ class ContractScreen extends StatelessWidget {
               children: [
                 RequestItem(
                   date: '14 Oktober 2024',
-                  title: 'Mengangon Sapi Ahmad',
-                  statusText: 'Approved',
-                  statusColor: Colors.green,
-                  icon: Icons.check_circle,
-                ),
-                SizedBox(height: 16.0),
-                RequestItem(
-                  date: '01 Oktober 2024',
-                  title: 'Mengangon Sapi',
-                  statusText: 'Pending',
-                  statusColor: Colors.amber,
-                  icon: Icons.access_time,
+                  title: 'Mengangon Sapi AHMAD',
+                  statusText: 'Rejected',
+                  statusColor: Colors.red,
+                  icon: Icons.cancel,
                 ),
               ],
             ),

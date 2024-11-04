@@ -286,12 +286,16 @@ class CustomCard extends StatelessWidget {
             // Avatar Image
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
-              child: Image.network(
-                'https://via.placeholder.com/80',
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-              ),
+              child: Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.person,
+                            color: Colors.grey,
+                            size: 40,
+                          ),
+                      ),
             ),
             const SizedBox(width: 16),
 

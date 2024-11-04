@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
 import 'package:get/get.dart';
 
-class ContractDetailScreen extends StatelessWidget {
+class RequestDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,11 +66,11 @@ class ContractDetailScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Colors.amber,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Text(
-                            'Approved',
+                            'On Going',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -175,6 +175,7 @@ class ContractDetailScreen extends StatelessWidget {
                     SizedBox(height: 16),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
+                      
                         backgroundColor: const Color(0xff20A577),
                         shape: RoundedRectangleBorder(
                           borderRadius:
@@ -189,8 +190,8 @@ class ContractDetailScreen extends StatelessWidget {
                         'Bayar',
                         style: TextStyle(
                           fontSize: 12,
-                          color:
-                              Colors.white, // Mengubah warna teks menjadi putih
+                          color: Colors
+                              .white, // Mengubah warna teks menjadi putih
                         ),
                       ),
                     ),
