@@ -130,6 +130,7 @@ class CattleController extends GetxController {
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
         body: jsonEncode({
+          "name": cattle.name,
           "status": cattle.status,
           "birth_date": cattle.birthDate,
           "birth_weight": cattle.birthWeight,
@@ -161,6 +162,7 @@ class CattleController extends GetxController {
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
         body: jsonEncode({
+          "name": cattle.name,
           "status": cattle.status,
           "birth_date": cattle.birthDate,
           "birth_weight": cattle.birthWeight,
@@ -191,6 +193,7 @@ class CattleController extends GetxController {
             'Authorization': 'Bearer ${_authController.accessToken}',
           });
       if (response.statusCode == 200) {
+         cattleItems.removeWhere((cattle) => cattle.id == id);
         log('Cattle deleted successfully');
         fetchCattleItems(); // Refresh cattle list after deletion
       } else {

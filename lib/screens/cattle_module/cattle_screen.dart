@@ -201,6 +201,7 @@ class CattleScreenState extends State<CattleScreen> {
                                 child: Column(
                                   children: [
                                     CattleCard(
+                                      id : cattle.id.toString(),
                                       cattleName: cattle.name ??
                                           'N/A', // Check for null
                                       iotId: cattle.iotDevice?.serialNumber ??
@@ -240,6 +241,7 @@ class CattleScreenState extends State<CattleScreen> {
 }
 
 class CattleCard extends StatelessWidget {
+  final String id;
   final String cattleName;
   final String iotId;
   final String breedAndWeight;
@@ -252,6 +254,7 @@ class CattleCard extends StatelessWidget {
 
   const CattleCard({
     super.key,
+    required this.id,
     required this.cattleName,
     required this.iotId,
     required this.breedAndWeight,
@@ -266,7 +269,7 @@ class CattleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(iotId),
+      key: Key(id),
       direction: DismissDirection.endToStart,
       background: ClipRRect(
         borderRadius: BorderRadius.circular(15),

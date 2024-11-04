@@ -22,6 +22,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
   TextEditingController _dateController =
       TextEditingController(); // Controller for the date
 
+  String nameSapi = '';
   String jenisSapi = '';
   DateTime selectedDate = DateTime.now();
   double tinggiSapi = 0;
@@ -118,6 +119,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          
                           const SizedBox(height: 16),
                           // Jenis Sapi
                           Container(
@@ -138,6 +140,43 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+
+                                  const Text('Nama Sapi*',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      )),
+                                  const SizedBox(height: 10),
+                                  // Tinggi Sapi
+                                  TextField(
+                                    keyboardType: TextInputType.text,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        nameSapi = value;
+                                      });
+                                    },
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Kosongkan maka nama akan diisi otomatis',
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(
+                                                0xFF20A577)), // Warna border ketika TextField fokus
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors
+                                                .red), // Warna border ketika ada error
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors
+                                                .red), // Warna border ketika fokus dan ada error
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+
                                   const Text('Jenis Sapi*',
                                       style: TextStyle(
                                         fontSize: 13,
@@ -382,8 +421,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
                                         if (_formKey.currentState!.validate()) {
                                           // Creating a Cattle object
                                           final newCattle = Cattle(
-                                            name:
-                                                'Nama Sapi', // Use a TextField to capture name if required
+                                            name: nameSapi, // Use a TextField to capture name if required
                                             breedId: selectedBreed?.id ?? 0,
                                             gender: kelaminSapi,
                                             birthDate:
