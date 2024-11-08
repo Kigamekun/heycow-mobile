@@ -332,6 +332,8 @@ class CattleController extends GetxController {
                   qrImage: "",
                 )
               : null,
+          temperature: 'Unknown',
+          healthStatus: 'Unknown',
         );
         return cattle;
       } else {

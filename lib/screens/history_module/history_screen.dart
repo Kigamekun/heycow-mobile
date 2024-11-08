@@ -70,7 +70,9 @@ class RequestItem extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ContractDetailScreen()),
+          MaterialPageRoute(builder: (context) => ContractDetailScreen(
+            id: 1,
+          )),
         );
       },
       child: Container(

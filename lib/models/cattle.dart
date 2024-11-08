@@ -14,6 +14,9 @@ class Cattle {
   final String? image;
   final IoTDevice? iotDevice;
   final int? breedId; // Added breedId field
+  final String? temperature;
+  final String? healthStatus;
+
 
   Cattle({
     this.id,
@@ -30,7 +33,9 @@ class Cattle {
     this.iotDeviceId,
     this.image,
     this.iotDevice,
-    this.breedId, // Initialize breedId here
+    this.breedId,
+    this.temperature,
+    this.healthStatus,
   });
 }
 

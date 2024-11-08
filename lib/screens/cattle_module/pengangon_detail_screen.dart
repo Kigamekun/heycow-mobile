@@ -1,22 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/models/cattle.dart';
+import 'package:heycowmobileapp/models/pengangon.dart';
 import 'package:heycowmobileapp/screens/cattle_module/detail_contract_screen.dart';
+import 'package:heycowmobileapp/screens/cattle_module/detail_request_screen.dart';
 import 'package:heycowmobileapp/screens/cattle_module/pengangon_list_screen.dart'; // Import your controller
 import 'package:get/get.dart';
-import 'package:heycowmobileapp/models/pengangon.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:heycowmobileapp/controllers/auth_controller.dart';
+import 'dart:convert';
 
 class PengangonDetailScreen extends StatefulWidget {
-  const PengangonDetailScreen({super.key});
+  final int id;
+  final int cattleId;
+
+  const PengangonDetailScreen(
+      {super.key, required this.id, required this.cattleId});
 
   @override
   State<PengangonDetailScreen> createState() => _PengangonDetailScreenState();
 }
 
 class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
+  Map<String, dynamic>? pengangonDetail;
+  String? _selectedDuration; // Menyimpan durasi yang dipilih
+  final AuthController _authController = Get.find<AuthController>();
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchContractDetails();
+  }
+
+  Future<void> fetchContractDetails() async {
+    final response = await http.get(
+      Uri.parse('https://heycow.my.id/api/users/${widget.id}/detail'),
+      headers: <String, String>{
+        'Authorization':
+            'Bearer ${_authController.accessToken}', // Add your auth token here
+      },
+    );
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      setState(() {
+        pengangonDetail = jsonData['data'];
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> postAngonkan() async {
+    if (_selectedDuration == null) {
+      // Handle jika durasi belum dipilih
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Pilih durasi terlebih dahulu')),
+      );
+      return;
+    }
+
+    final durationInt = _selectedDuration == '6 Bulan' ? 6 : 12;
+    final response = await http.post(
+      Uri.parse('https://heycow.my.id/api/request-angon'),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_authController.accessToken}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'peternak_id': widget.id,
+        'cattle_id': widget.cattleId,
+        'durasi': durationInt,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Request berhasil')),
+      );
+
+      Get.to(() => const DetailRequestScreen());
+      
+    } else {
+      print(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal melakukan request')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String selectedDuration = '6 Bulan';
-
     return Scaffold(
       backgroundColor: const Color(0xFFEAEBED),
       body: Stack(
@@ -70,10 +146,31 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
                               )
                             ],
                           ),
-                          child: const Column(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomCard(),
+                              CustomCard(
+                                pengangon: Pengangon(
+                                  id: pengangonDetail != null
+                                      ? pengangonDetail!['pengangon']['id']
+                                      : 0,
+                                  name: pengangonDetail != null
+                                      ? pengangonDetail!['pengangon']['name']
+                                      : '',
+                                  farm: pengangonDetail != null
+                                      ? pengangonDetail!['pengangon']['farm']
+                                      : '',
+                                  address: pengangonDetail != null
+                                      ? pengangonDetail!['pengangon']['address']
+                                      : '',
+                                  upah: pengangonDetail != null
+                                      ? pengangonDetail!['pengangon']['upah']
+                                      : "",
+                                  rate: pengangonDetail != null
+                                      ? pengangonDetail!['pengangon']['rate']
+                                      : 0,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -113,8 +210,21 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
                                 border: TableBorder.all(),
                                 columnWidths: const {0: FixedColumnWidth(150)},
                                 children: [
-                                  _buildTableRow('Name', 'Sapi'),
-                                  _buildTableRow('Ahmad Abdul', 'Limousin 1'),
+                                  _buildTableRowHeading(
+                                      'Pelanggan', 'Sapi', 'Durasi'),
+                                  if (pengangonDetail?['riwayat_pelanggan'] !=
+                                      null)
+                                    ...pengangonDetail!['riwayat_pelanggan']
+                                        .map<TableRow>((data) => _buildTableRow(
+                                              data['customer_name'] ?? '',
+                                              data['cow_name'] ?? '',
+                                              data['durasi'] ?? '',
+                                            ))
+                                        .toList(),
+                                  if (pengangonDetail?['riwayat_pelanggan'] ==
+                                      null)
+                                    _buildTableRow(
+                                        'Data tidak tersedia', '', ''),
                                 ],
                               ),
 
@@ -129,30 +239,26 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
                               const SizedBox(height: 20.0),
 
                               DropdownButtonFormField<String>(
-                                    items: [
-                                      '6 Bulan',
-                                      '1 Tahun',
-                                    ].map((type) {
-                                      return DropdownMenuItem<String>(
-                                        value: type,
-                                        child: Text(type),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedDuration = value!;
-                                      });
-                                    },
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Pilih Durasi Mengangon',
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color(0xFF20A577)),
-                                      ),
-                                    ),
+                                items: ['6 Bulan', '1 Tahun'].map((type) {
+                                  return DropdownMenuItem<String>(
+                                    value: type,
+                                    child: Text(type),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedDuration = value;
+                                  });
+                                },
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Pilih Durasi Mengangon',
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0xFF20A577)),
                                   ),
-
+                                ),
+                              ),
 
                               const SizedBox(height: 30.0),
 
@@ -177,8 +283,8 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
                                               ),
                                             ),
                                             onPressed: () {
-                                              Get.to(() =>
-                                                  const PengangonListScreen());
+                                              // Get.to(() =>
+                                              //     const PengangonListScreen());
                                             },
                                             child: const Text(
                                               'Kembali',
@@ -215,10 +321,7 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
                                               ),
                                             ),
                                             onPressed: () {
-                                              Get.to(
-                                                  () => DetailContractScreen());
-
-                                              // Aksi tombol kedua
+                                              postAngonkan();
                                             },
                                             child: const Text(
                                               'Angonkan',
@@ -252,7 +355,7 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
     );
   }
 
-  TableRow _buildTableRow(String label, String value) {
+  TableRow _buildTableRowHeading(String label, String value, String value2) {
     return TableRow(
       children: [
         Padding(
@@ -264,7 +367,38 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            value2,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
+  TableRow _buildTableRow(String label, String value, String value2) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            label,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Text(value),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(value2),
         ),
       ],
     );
@@ -272,7 +406,9 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
 }
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({super.key});
+  final Pengangon pengangon;
+
+  const CustomCard({super.key, required this.pengangon});
 
   @override
   Widget build(BuildContext context) {
@@ -287,15 +423,15 @@ class CustomCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.person,
-                            color: Colors.grey,
-                            size: 40,
-                          ),
-                      ),
+                width: 80,
+                height: 80,
+                color: Colors.grey[300],
+                child: const Icon(
+                  Icons.person,
+                  color: Colors.grey,
+                  size: 40,
+                ),
+              ),
             ),
             const SizedBox(width: 16),
 
@@ -307,7 +443,7 @@ class CustomCard extends StatelessWidget {
                   Container(
                     width: screenWidth * 0.5,
                     child: Text(
-                      'Unknown',
+                      pengangon.name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -317,17 +453,29 @@ class CustomCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Unknown address',
+                    pengangon.farm,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    pengangon.address,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    pengangon.upah,
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'No bio available.',
-                    style: const TextStyle(fontSize: 14),
-                  ),
                 ],
               ),
             ),
@@ -338,35 +486,14 @@ class CustomCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              children: const [
-                Icon(Icons.star, color: Colors.amber, size: 30),
-                Icon(Icons.star, color: Colors.amber, size: 30),
-                Icon(Icons.star, color: Colors.amber, size: 30),
-                Icon(Icons.star, color: Colors.amber, size: 30),
-                Icon(Icons.star_border, color: Colors.grey, size: 30),
-              ],
+              children: List.generate(5, (index) {
+                return Icon(
+                  index < pengangon.rate ? Icons.star : Icons.star_border,
+                  color: index < pengangon.rate ? Colors.amber : Colors.grey,
+                  size: 30,
+                );
+              }),
             ),
-            SizedBox(
-              width: 120,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff20A577),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                onPressed: () {
-                  Get.to(() => const PengangonDetailScreen());
-                },
-                child: const Text(
-                  'Pilih',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            )
           ],
         )
       ],

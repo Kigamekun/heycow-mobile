@@ -3,22 +3,46 @@ import 'package:heycowmobileapp/screens/cattle_module/pengangon_detail_screen.da
 import 'package:get/get.dart';
 import 'package:heycowmobileapp/controllers/pengangon_controller.dart';
 import 'package:heycowmobileapp/models/pengangon.dart';
+
 class PengangonListScreen extends StatefulWidget {
   static const routeName = '/beranda';
+  final int cattleId;
 
-  const PengangonListScreen({super.key});
+  const PengangonListScreen({super.key, required this.cattleId});
 
   @override
   State<PengangonListScreen> createState() => _PengangonListScreenState();
 }
 
 class _PengangonListScreenState extends State<PengangonListScreen> {
-  final PengangonController _pengangonController = Get.put(PengangonController());
+  final PengangonController _pengangonController =
+      Get.put(PengangonController());
+
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _pengangonController.fetchPengangonItems();
+    searchController.addListener(() {
+      _pengangonController.fetchPengangonItems(query: searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  // Method to fetch cattle items
+  void fetchPengangonItems() {
+    _pengangonController.fetchPengangonItems();
+  }
+
+  // Public method to refresh cattle data
+  void refreshData() {
+    fetchPengangonItems();
   }
 
   @override
@@ -76,8 +100,8 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                               )
                             ],
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -85,17 +109,19 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                                   children: [
                                     Expanded(
                                       child: TextField(
-                                        decoration: InputDecoration(
+                                        controller: searchController,
+                                        decoration: const InputDecoration(
                                           hintText:
-                                              "Search Cattle Name or Device ID",
+                                              "Search Pengangon Name",
                                           hintStyle: TextStyle(
-                                            color: Colors.grey,
+                                            color: Colors.grey, // Text color
                                           ),
-                                          border: InputBorder.none,
+                                          border: InputBorder
+                                              .none, // Remove the underline border
                                         ),
                                       ),
                                     ),
-                                    Icon(
+                                    const Icon(
                                       Icons.search,
                                       color: Colors.black,
                                     ),
@@ -109,8 +135,7 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                     ],
                   ),
                   const Padding(
-                    padding:
-                        EdgeInsets.only(left: 10, right: 10, top: 0.0),
+                    padding: EdgeInsets.only(left: 10, right: 10, top: 0.0),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
@@ -128,9 +153,15 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
                   ),
                   const SizedBox(height: 20),
                   Obx(() {
+                    if (_pengangonController.pengangonItems.isEmpty) {
+                      return const Center(
+                        child: Text('No Pengangon available.'),
+                      );
+                    }
+
                     return Column(
                       children: _pengangonController.pengangonItems
-                          .map((pengangon) => CustomCard(pengangon: pengangon))
+                          .map((pengangon) => CustomCard(pengangon: pengangon,cattleId:widget.cattleId))
                           .toList(),
                     );
                   }),
@@ -147,8 +178,9 @@ class _PengangonListScreenState extends State<PengangonListScreen> {
 
 class CustomCard extends StatelessWidget {
   final Pengangon pengangon;
+  final int cattleId;
 
-  const CustomCard({super.key, required this.pengangon});
+  const CustomCard({super.key,required this.cattleId, required this.pengangon});
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +226,7 @@ class CustomCard extends StatelessWidget {
                             color: Colors.grey,
                             size: 40,
                           ),
-                      ),
+                        ),
                 ),
                 const SizedBox(width: 16),
 
@@ -206,7 +238,7 @@ class CustomCard extends StatelessWidget {
                       Container(
                         width: screenWidth * 0.5,
                         child: Text(
-                          pengangon.name ?? 'Unknown',
+                          pengangon.name,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -216,17 +248,29 @@ class CustomCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        pengangon.address ?? 'Unknown address',
+                        pengangon.farm,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        pengangon.address,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        pengangon.upah,
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        pengangon.bio ?? 'No bio available.',
-                        style: const TextStyle(fontSize: 14),
-                      ),
                     ],
                   ),
                 ),
@@ -237,13 +281,14 @@ class CustomCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  children: const [
-                    Icon(Icons.star, color: Colors.amber, size: 30),
-                    Icon(Icons.star, color: Colors.amber, size: 30),
-                    Icon(Icons.star, color: Colors.amber, size: 30),
-                    Icon(Icons.star, color: Colors.amber, size: 30),
-                    Icon(Icons.star_border, color: Colors.grey, size: 30),
-                  ],
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < pengangon.rate ? Icons.star : Icons.star_border,
+                      color:
+                          index < pengangon.rate ? Colors.amber : Colors.grey,
+                      size: 30,
+                    );
+                  }),
                 ),
                 SizedBox(
                   width: 120,
@@ -255,7 +300,10 @@ class CustomCard extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Get.to(() => const PengangonDetailScreen());
+                      Get.to(() => PengangonDetailScreen(
+                        id : pengangon.id,
+                        cattleId: cattleId,
+                      ));
                     },
                     child: const Text(
                       'Pilih',

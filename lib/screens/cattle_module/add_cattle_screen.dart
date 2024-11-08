@@ -18,8 +18,8 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
   final _formKey = GlobalKey<FormState>();
   Breed? selectedBreed;
   List<Breed> filteredBreeds = [];
-  TextEditingController _searchController = TextEditingController();
-  TextEditingController _dateController =
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _dateController =
       TextEditingController(); // Controller for the date
 
   String nameSapi = '';
@@ -113,7 +113,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const AlertBox(),
+                    // const AlertBox(),
                     Padding(
                       padding: const EdgeInsets.only(right: 15, left: 15),
                       child: Column(

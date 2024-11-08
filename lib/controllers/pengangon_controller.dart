@@ -41,19 +41,17 @@ class PengangonController extends GetxController {
           return;
         }
         final List<Pengangon> items = jsonData.map<Pengangon>((item) {
+
+          log('item: $item');
+
           return Pengangon(
             id: item['id'],
             name: item['name'],
-            email: item['email'],
-            emailVerifiedAt: item['email_verified_at'],
-            role: item['role'],
-            phoneNumber: item['phone_number'],
+            farm: item['farm'],
             address: item['address'],
-            bio: item['bio'],
+            upah: item['upah'],
             avatar: item['avatar'],
-            isPengangon: item['is_pengangon'],
-            createdAt: item['created_at'],
-            updatedAt: item['updated_at'],
+            rate : item['rate'],
           );
         }).toList();
         pengangonItems.assignAll(items);

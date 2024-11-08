@@ -109,7 +109,7 @@ class CattleScreenState extends State<CattleScreen> {
                                         controller: searchController,
                                         decoration: const InputDecoration(
                                           hintText:
-                                              "Search Cattle Name or Device ID",
+                                              "Search Cattle Name",
                                           hintStyle: TextStyle(
                                             color: Colors.grey, // Text color
                                           ),

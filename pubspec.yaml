@@ -57,6 +57,7 @@ dependencies:
   http: ^1.2.2
   image_picker: ^0.8.5+3
   dio: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
 
 
 dev_dependencies:

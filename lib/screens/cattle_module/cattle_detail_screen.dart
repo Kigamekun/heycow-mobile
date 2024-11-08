@@ -36,12 +36,11 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
     }
   }
 
-   Future<void> _refreshCurrentScreen() async {
+  Future<void> _refreshCurrentScreen() async {
     // Simulate a network call or any other asynchronous operation
     await Future.delayed(const Duration(seconds: 1));
     _fetchCattleDetails();
-   }
-
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +124,10 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                               ),
                                             ),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 14, vertical: 6),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                      vertical: 6),
                                               decoration: BoxDecoration(
                                                 color: _cattle.status == 'sakit'
                                                     ? Colors.red
@@ -162,16 +163,15 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                               )
                                             ],
                                           ),
-                                          child: const Icon(Icons.hearing_rounded,
+                                          child: const Icon(
+                                              Icons.hearing_rounded,
                                               color: Colors.white),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      'IoT ID : ${_cattle.iotDevice?.serialNumber
-                                                  ?.toString() ??
-                                              'N/A'}',
+                                      'IoT ID : ${_cattle.iotDevice?.serialNumber?.toString() ?? 'N/A'}',
                                       style: const TextStyle(
                                         color: Colors.grey,
                                         fontSize: 14,
@@ -226,8 +226,9 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                             backgroundColor:
                                                 const Color(0xff20A577),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15), // Rounded corners
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      15), // Rounded corners
                                             ),
                                           ),
                                           onPressed: () {
@@ -253,8 +254,9 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                             backgroundColor:
                                                 const Color(0xff20A577),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15), // Rounded corners
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      15), // Rounded corners
                                             ),
                                           ),
                                           onPressed: () async {
@@ -268,7 +270,6 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                                           cattle: _cattle),
                                                 ),
                                               );
-        
                                               if (isSuccess == true) {
                                                 // Fetch updated cattle details if the assignment was successful
                                                 _fetchCattleDetails();
@@ -298,7 +299,9 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                 // Table for cattle data
                                 Table(
                                   border: TableBorder.all(),
-                                  columnWidths: const {0: FixedColumnWidth(150)},
+                                  columnWidths: const {
+                                    0: FixedColumnWidth(150)
+                                  },
                                   children: [
                                     _buildTableRow(
                                         'Name', _cattle.name as String),
@@ -306,40 +309,73 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                         'Breed', _cattle.breed as String),
                                     _buildTableRow('Date of Birth',
                                         _cattle.birthDate as String),
-                                    _buildTableRow('Weight',
-                                        '${_cattle.birthWeight} kg'),
-                                    _buildTableRow('Height',
-                                        '${_cattle.birthHeight} cm'),
+                                    _buildTableRow(
+                                        'Weight', '${_cattle.birthWeight} kg'),
+                                    _buildTableRow(
+                                        'Height', '${_cattle.birthHeight} cm'),
                                     _buildTableRow(
                                         'Gender', _cattle.gender as String),
-                                    _buildTableRow('Vaccine', 'Vaccine 1'),
                                     _buildTableRow(
                                         'ID Device',
                                         (_cattle.iotDevice?.serialNumber
-                                                ?.toString() ??
+                                                .toString() ??
                                             'N/A')),
-                                    _buildTableRow('Battery', '87%'),
                                   ],
                                 ),
-        
                                 const SizedBox(height: 25.0),
-                                const Text(
-                                  'Health Monitoring',
-                                  style: TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween, // Center the buttons
+                                  children: [
+                                    const Text(
+                                      'Health Monitoring',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xff20A577),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              15), // Rounded corners
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                EditCattleScreen(
+                                                    cattle: _cattle),
+                                          ),
+                                        );
+                                        // Aksi tombol kedua
+                                      },
+                                      child: const Text("Detail",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors
+                                                .white, // Mengubah warna teks menjadi putih
+                                          )),
+                                    )
+                                  ],
                                 ),
                                 const SizedBox(height: 25.0),
                                 Table(
                                   border: TableBorder.all(),
-                                  columnWidths: const {0: FixedColumnWidth(150)},
+                                  columnWidths: const {
+                                    0: FixedColumnWidth(150)
+                                  },
                                   children: [
-                                    _buildTableRow('Temperature', '22°C'),
-                                    _buildTableRow('Activity', 'Normal'),
-                                    _buildTableRow('Date of Birth', '10-12-2004'),
+                                    _buildTableRow('Temperature',
+                                        '${_cattle.temperature} °C'),
+                                    _buildTableRow(
+                                        'Status', '${_cattle.healthStatus}'),
                                   ],
                                 ),
                                 const SizedBox(height: 30.0),
-        
                                 Row(
                                   children: <Widget>[
                                     // Expanded pertama dengan flex 5
@@ -362,7 +398,9 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                               ),
                                               onPressed: () {
                                                 Get.to(() =>
-                                                    const PengangonListScreen());
+                                                    PengangonListScreen(
+                                                        cattleId: _cattle.id!
+                                                    ));
                                               },
                                               child: const Text(
                                                 'Angonkan',
@@ -377,9 +415,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                         ],
                                       ),
                                     ),
-        
                                     const SizedBox(width: 20),
-        
                                     // Expanded kedua dengan flex 2
                                     Expanded(
                                       flex: 1,

@@ -1,6 +1,6 @@
 class AppConstants {
+  // static const String baseURL = 'https://192.168.43.9:8000/api/'; //production
   static const String baseURL = 'https://heycow.my.id/api/'; //production
-  // static const String baseURL = 'https://heycow.my.id/api/'; //production
   // auth module
   static const String loginUrl = '${baseURL}auth/login';
   static const String refreshTokenUrl = '${baseURL}auth/refresh_token';
@@ -28,7 +28,7 @@ class AppConstants {
 
 
   // pengangon
-  static const String pengangonUrl = '${baseURL}users';
+  static const String pengangonUrl = '${baseURL}users/pengangon';
 
 
 
