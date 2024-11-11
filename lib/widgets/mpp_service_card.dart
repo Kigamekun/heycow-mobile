@@ -14,7 +14,7 @@ class MPPServiceCard extends StatelessWidget {
   final VoidCallback onPressed;
 
   const MPPServiceCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.badgeText,
     required this.badgeColor,
@@ -23,7 +23,7 @@ class MPPServiceCard extends StatelessWidget {
     required this.serviceName,
     required this.buttonText,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

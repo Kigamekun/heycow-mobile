@@ -3,9 +3,6 @@ import 'package:get/get.dart';
 import 'package:heycowmobileapp/screens/auth_module/login_screen.dart';
 import 'package:heycowmobileapp/widgets/mpp_alert.dart';
 import 'package:heycowmobileapp/widgets/mpp_button.dart';
-import 'package:heycowmobileapp/widgets/mpp_image.dart';
-import 'package:heycowmobileapp/screens/auth_module/activation_screen.dart';
-import 'package:heycowmobileapp/app/theme.dart';
 
 class SuccessRegisterScreen extends StatefulWidget {
   static const routeName = '/success-register';
@@ -21,6 +18,7 @@ class _SuccessRegisterScreenState extends State<SuccessRegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
           padding: EdgeInsets.only(
               left: screenPadding,
@@ -45,7 +43,7 @@ class _SuccessRegisterScreenState extends State<SuccessRegisterScreen> {
                 child: MPPButton(
                   text: 'Login Screen',
                   onPressed: () => Get.to(() => const LoginScreen()),
-                  backgroundColor: Color(0xff20A577),
+                  backgroundColor: const Color(0xff20A577),
                 ),
               ),
             ],

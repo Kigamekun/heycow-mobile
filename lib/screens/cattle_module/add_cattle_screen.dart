@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:heycowmobileapp/controllers/cattle_controller.dart';
 import 'package:heycowmobileapp/models/breed.dart'; // Import your controller
 import 'package:heycowmobileapp/models/cattle.dart'; // Import your controller
-import 'package:heycowmobileapp/widgets/mpp_dropdown.dart'; // Import your MPPDropdown widget
 
 class AddCattleScreen extends StatefulWidget {
   const AddCattleScreen({super.key});

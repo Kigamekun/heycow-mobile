@@ -7,11 +7,11 @@ class MPPBasePage extends StatelessWidget {
   final List<Widget> children;
 
   const MPPBasePage({
-    Key? key,
+    super.key,
     required this.headerIcon,
     required this.headerTitle,
     required this.children,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

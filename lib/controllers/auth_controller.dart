@@ -19,10 +19,17 @@ class AuthController extends GetxController {
   var refreshToken = ''.obs;
   var tokenExpireAt = ''.obs;
 
-  var email = ''.obs;
   var nama = ''.obs;
-  var farmName = ''.obs;
+  var email = ''.obs;
   var phone = ''.obs;
+  var address = ''.obs;
+  var gender = ''.obs;
+  var farm = 0.obs;
+  var farmName = ''.obs;
+  var farmAddress = ''.obs;
+  var isPengangon = 0.obs;
+  var upah = ''.obs;
+
   var password = ''.obs;
   var ulangiPassword = ''.obs;
   var avatar = ''.obs;
@@ -114,46 +121,10 @@ class AuthController extends GetxController {
     }
   }
 
-  void loginWithGoogle(String? id, String? email, String? username) async {
-    final fields = {
-      'id': id,
-      'email': email,
-      'name': username,
-    };
-
-    try {
-      DateTime now = DateTime.now();
-      int epochTimeSeconds =
-          now.millisecondsSinceEpoch ~/ 1000; // Divide by 1000 for seconds
-
-      String googleToken = AppConstants.googleToken;
-      String epochTime = epochTimeSeconds.toString();
-
-      // Encode the string to Base64 (google token-epoch time)
-      String encodedString =
-          base64.encode(utf8.encode('$googleToken-$epochTime'));
-
-      final response = await http.post(
-        Uri.parse('${AppConstants.loginWithGoogleUrl}?key=$encodedString'),
-        body: jsonEncode(fields),
-      );
-
-      if (response.statusCode == 200) {
-        handleSuccessfulLogin(response.body);
-
-        Get.offAll(() => const MainScreen());
-      } else {
-        handleErrorResponse(response.body);
-      }
-    } catch (e) {
-      handleNetworkError(e);
-    }
-  }
-
   void register() async {
     // if (!validate()) return;
 
-    final fields = generateFieldsMap();
+    generateFieldsMap();
 
     try {
       log(nama.value);
@@ -285,38 +256,6 @@ class AuthController extends GetxController {
     Get.offAllNamed('/login');
   }
 
-  Future<void> signInWithGoogle() async {
-    try {
-      await googleSignIn.signOut();
-      final GoogleSignInAccount? googleSignInAccount =
-          await googleSignIn.signIn();
-      if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
-
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleSignInAuthentication.accessToken,
-          idToken: googleSignInAuthentication.idToken,
-        );
-
-        final UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
-        if (userCredential != null) {
-          // Handle successful sign-in
-
-          loginWithGoogle(userCredential.user!.uid, userCredential.user!.email,
-              userCredential.user!.displayName);
-        } else {
-          // Handle sign-in failure
-          handleErrorResponse(userCredential.toString());
-          // Display an error message or try again
-        }
-      }
-    } catch (e) {
-      handleNetworkError(e);
-    }
-  }
-
   void createFCM(String token) async {
     try {
       final fields = {
@@ -374,9 +313,21 @@ class AuthController extends GetxController {
           nama.value = data['name']?.toString() ?? '';
           email.value = data['email']?.toString() ?? '';
           phone.value = data['phone_number']?.toString() ?? '';
-          farmName.value = data['farmName']?.toString() ?? '-';
+          address.value = data['address']?.toString() ?? '';
+          isPengangon.value = data['is_pengangon'] ?? 0;
+          upah.value = data['upah']?.toString() ?? '';
+
+          if (data['farm'] != null) {
+            farm.value = 1;
+
+            farmName.value = data['farm']['name']?.toString() ?? '-';
+            farmAddress.value = data['farm']['address']?.toString() ?? '-';
+          } else {
+            farm.value = 0;
+          }
+
           avatarUrl.value = (data['avatar'] != null && data['avatar'] != '')
-              ? data['avatar_url'].toString()
+              ? data['avatar'].toString()
               : '';
           return;
         }

@@ -10,7 +10,6 @@ class ContractScreen extends StatefulWidget {
   const ContractScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ContractScreenState createState() => _ContractScreenState();
 }
 
@@ -41,10 +40,10 @@ class _ContractScreenState extends State<ContractScreen> {
         isLoading = false;
       });
     } else {
-      // Handle error
       setState(() {
         isLoading = false;
       });
+      // Optionally handle error
     }
   }
 
@@ -66,25 +65,29 @@ class _ContractScreenState extends State<ContractScreen> {
         ),
       ),
       backgroundColor: const Color(0xFFEAEBED),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : requests.isEmpty
-              ? const Center(child: Text("No requests found"))
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: requests.length,
-                  itemBuilder: (context, index) {
-                    final request = requests[index];
-                    return RequestItem(
-                      id: request['id'],
-                      date: request['tanggal'] ?? 'N/A',
-                      title: request['title'],
-                      statusText: request['status'],
-                      statusColor: getStatusColor(request['status']),
-                      icon: getStatusIcon(request['status']),
-                    );
-                  },
-                ),
+      body: RefreshIndicator(
+        onRefresh:
+            fetchRequests, // Trigger the fetchRequests function on pull-to-refresh
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : requests.isEmpty
+                ? const Center(child: Text("No requests found"))
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: requests.length,
+                    itemBuilder: (context, index) {
+                      final request = requests[index];
+                      return RequestItem(
+                        id: request['id'],
+                        date: request['tanggal'] ?? 'N/A',
+                        title: request['title'],
+                        statusText: request['status'],
+                        statusColor: getStatusColor(request['status']),
+                        icon: getStatusIcon(request['status']),
+                      );
+                    },
+                  ),
+      ),
     );
   }
 
@@ -92,10 +95,10 @@ class _ContractScreenState extends State<ContractScreen> {
     switch (status) {
       case 'pending':
         return Colors.orange;
-      case 'approved':
+      case 'active':
+        return Colors.blue;
+      case 'completed':
         return Colors.green;
-      case 'rejected':
-        return Colors.red;
       default:
         return Colors.grey;
     }
@@ -105,12 +108,12 @@ class _ContractScreenState extends State<ContractScreen> {
     switch (status) {
       case 'pending':
         return Icons.hourglass_empty;
-      case 'approved':
+      case 'active':
         return Icons.check_circle;
-      case 'rejected':
-        return Icons.cancel;
+      case 'completed':
+        return Icons.check_circle;
       default:
-        return Icons.help_outline;
+        return Icons.check_circle;
     }
   }
 }

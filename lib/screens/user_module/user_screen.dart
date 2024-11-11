@@ -1,8 +1,11 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart'; // Import your AuthController
 import 'package:heycowmobileapp/screens/auth_module/edit_profile_screen.dart';
 import 'package:heycowmobileapp/screens/auth_module/help_center_screen.dart';
+import 'package:heycowmobileapp/screens/user_module/register_pengangon_screen.dart';
 
 class UserScreen extends StatefulWidget {
   static const routeName = '/beranda';
@@ -15,7 +18,6 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   final AuthController _authController = Get.find<AuthController>();
-
 
   @override
   void initState() {
@@ -109,13 +111,14 @@ class _UserScreenState extends State<UserScreen> {
                                       ),
                                     ),
                                     onPressed: () {
+                                      Get.to(RegisterPengangonScreen());
                                       // Implement Upgrade Action
                                     },
                                     child: const Padding(
                                       padding:
                                           EdgeInsets.symmetric(vertical: 12.0),
                                       child: Text(
-                                        'Upgrade Now',
+                                        'Daftar Pengangon',
                                         style: TextStyle(
                                           fontSize: 16,
                                           color: Colors.white,
@@ -147,7 +150,7 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                             TextButton.icon(
                               onPressed: () {
-                                Get.to(() => EditProfileScreen());
+                                Get.to(() => const EditProfileScreen());
                               },
                               icon: const Icon(Icons.edit, color: Colors.green),
                               label: const Text(
@@ -168,14 +171,13 @@ class _UserScreenState extends State<UserScreen> {
                             return Column(
                               children: [
                                 _buildInfoTile(Icons.person_outline,
-                                    _authController.nama.value ?? 'name'),
+                                    _authController.nama.value),
                                 _buildInfoTile(Icons.email_outlined,
-                                    _authController.email.value ?? 'email'),
+                                    _authController.email.value),
                                 _buildInfoTile(Icons.phone_outlined,
-                                    _authController.phone.value ??
-                                        'phone number'),
+                                    _authController.phone.value),
                                 _buildInfoTile(Icons.agriculture_outlined,
-                                    _authController.farmName.value ?? 'farm s'),
+                                    _authController.farmName.value),
                               ],
                             );
                           }),
@@ -196,13 +198,8 @@ class _UserScreenState extends State<UserScreen> {
                                 },
                               ),
                               _buildOptionTile(
-                                Icons.forum_outlined,
-                                'Community',
-                                onTap: () {},
-                              ),
-                              _buildOptionTile(
-                                Icons.catching_pokemon_outlined,
-                                'Cattle',
+                                Icons.device_hub,
+                                'IOT Device',
                                 onTap: () {},
                               ),
                               _buildOptionTile(
@@ -251,13 +248,6 @@ class _UserScreenState extends State<UserScreen> {
       onTap: onTap,
     );
   }
-}
-
-Widget _buildInfoTile(IconData icon, String label) {
-  return ListTile(
-    leading: Icon(icon, color: Colors.green),
-    title: Text(label, style: const TextStyle(fontSize: 16)),
-  );
 }
 
 Widget _buildOptionTile(IconData icon, String label,

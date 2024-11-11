@@ -7,7 +7,7 @@ import 'package:heycowmobileapp/screens/cattle_module/cattle_detail_screen.dart'
 class CattleScreen extends StatefulWidget {
   static const routeName = '/beranda';
 
-  const CattleScreen({Key? key}) : super(key: key);
+  const CattleScreen({super.key});
   @override
   CattleScreenState createState() => CattleScreenState();
 }
@@ -211,8 +211,8 @@ class CattleScreenState extends State<CattleScreen> {
                                       lastVaccinate: '12',
                                       status: cattle.status,
                                       statusIcon: Icons.check_circle,
-                                      healthStatus: 'Healthy',
-                                      temperature: '37',
+                                      healthStatus: cattle.healthStatus ?? 'N/A',
+                                      temperature: cattle.temperature ?? 'N/A',
                                       onDelete: () {
                                         // Delete function
                                         cattleController

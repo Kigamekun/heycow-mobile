@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/models/cattle.dart';
-import 'package:heycowmobileapp/screens/cattle_module/detail_contract_screen.dart';
-import 'package:heycowmobileapp/screens/cattle_module/pengangon_list_screen.dart'; // Import your controller
 import 'package:get/get.dart';
-import 'package:heycowmobileapp/screens/beranda_module/beranda_screen.dart';
-import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
 import 'package:heycowmobileapp/screens/main_screen.dart'; // Import MainScreen
 
 class DetailContractScreen extends StatelessWidget {
@@ -12,10 +7,11 @@ class DetailContractScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         // Navigate to MainScreen and prevent back navigation
-        Get.offAll(() => MainScreen());
+        Get.offAll(() => const MainScreen());
         return false; // Prevent the default back action
       },
       child: Scaffold(
@@ -149,7 +145,7 @@ class DetailContractScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               onPressed: () {
-                                               Get.offAll(() => MainScreen()); // Navigate to MainScreen
+                                               Get.offAll(() => const MainScreen()); // Navigate to MainScreen
                                               },
                                               child: const Text(
                                                 'Tutup',
@@ -183,23 +179,6 @@ class DetailContractScreen extends StatelessWidget {
     );
   }
 
-  TableRow _buildTableRow(String label, String value) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(value),
-        ),
-      ],
-    );
-  }
 
   Widget _buildDetailsRow(String title, String value) {
     return Padding(

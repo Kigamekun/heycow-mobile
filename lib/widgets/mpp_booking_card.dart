@@ -12,7 +12,7 @@ class MPPBookingCard extends StatelessWidget {
   final VoidCallback onPressed;
 
   const MPPBookingCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.date,
     required this.time,
@@ -21,7 +21,7 @@ class MPPBookingCard extends StatelessWidget {
     required this.buttonColor,
     required this.buttonText,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

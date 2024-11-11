@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/screens/contract_module/contract_detail_screen.dart';
 
 class HistoryScreen extends StatelessWidget {
+  const HistoryScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +31,8 @@ class HistoryScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(16.0),
-              children: [
+              padding: const EdgeInsets.all(16.0),
+              children: const [
                 RequestItem(
                   date: '14 Oktober 2024',
                   title: 'Mengangon Sapi',
@@ -56,7 +58,7 @@ class RequestItem extends StatelessWidget {
   final Color statusColor;
   final IconData icon;
 
-  RequestItem({
+  const RequestItem({super.key, 
     required this.date,
     required this.title,
     required this.statusText,
@@ -70,13 +72,13 @@ class RequestItem extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ContractDetailScreen(
+          MaterialPageRoute(builder: (context) => const ContractDetailScreen(
             id: 1,
           )),
         );
       },
       child: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -84,7 +86,7 @@ class RequestItem extends StatelessWidget {
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
               blurRadius: 6,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -98,13 +100,13 @@ class RequestItem extends StatelessWidget {
                 color: Colors.grey[600],
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,

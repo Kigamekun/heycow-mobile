@@ -18,7 +18,7 @@ class _AddCattleScreenState extends State<AddCattleScreen> {
   final _formKey = GlobalKey<FormState>();
   Breed? selectedBreed;
   List<Breed> filteredBreeds = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   String jenisSapi = '';
   DateTime selectedDate = DateTime.now();

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MPPCard extends StatelessWidget {
   final Widget child;
 
-  const MPPCard({Key? key, required this.child}) : super(key: key);
+  const MPPCard({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

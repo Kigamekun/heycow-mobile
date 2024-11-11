@@ -40,7 +40,6 @@ class _AssignDeviceScreenState extends State<AssignDeviceScreen> {
       }),
     );
 
-    print(response.body);
 
     if (response.statusCode == 200) {
       List devices = json.decode(response.body);
@@ -57,7 +56,7 @@ class _AssignDeviceScreenState extends State<AssignDeviceScreen> {
   final _formKey = GlobalKey<FormState>();
   Breed? selectedBreed;
   List<Breed> filteredBreeds = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -119,7 +118,7 @@ class _AssignDeviceScreenState extends State<AssignDeviceScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const AlertBox(),
+                    // const AlertBox(),
                     Padding(
                       padding: const EdgeInsets.only(right: 15, left: 15),
                       child: Column(
@@ -151,7 +150,7 @@ class _AssignDeviceScreenState extends State<AssignDeviceScreen> {
                                     textFieldConfiguration:
                                         TextFieldConfiguration(
                                       controller: _typeAheadController,
-                                      decoration: InputDecoration(
+                                      decoration: const InputDecoration(
                                         labelText: 'Search IoT Device',
                                         border: OutlineInputBorder(),
                                       ),
@@ -183,12 +182,11 @@ class _AssignDeviceScreenState extends State<AssignDeviceScreen> {
                                           );
 
                                           // Go back to CattleDetailScreen to indicate success
+                                          // ignore: use_build_context_synchronously
                                           Navigator.pop(context,
                                               true); // Returning true to indicate success
                                         } catch (e) {
                                           // Handle error
-                                          print(
-                                              "Failed to assign IoT device: $e");
                                         }
                                       }
                                     },

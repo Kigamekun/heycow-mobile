@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:heycowmobileapp/controllers/cattle_controller.dart';
 import 'package:heycowmobileapp/models/breed.dart'; // Import your breed model
 import 'package:heycowmobileapp/models/cattle.dart'; // Import your cattle model
-import 'package:heycowmobileapp/widgets/mpp_dropdown.dart'; // Import your MPPDropdown widget
 
 class EditCattleScreen extends StatefulWidget {
   final Cattle? cattle; // Add a cattle parameter for updating
@@ -20,13 +19,13 @@ class _EditCattleScreenState extends State<EditCattleScreen> {
   final _formKey = GlobalKey<FormState>();
   Breed? selectedBreed;
   List<Breed> filteredBreeds = [];
-  TextEditingController _searchController = TextEditingController();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _tinggiSapiController = TextEditingController();
-  TextEditingController _beratSapiController = TextEditingController();
-  TextEditingController _nameSapiController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _tinggiSapiController = TextEditingController();
+  final TextEditingController _beratSapiController = TextEditingController();
+  final TextEditingController _nameSapiController = TextEditingController();
 
-String nameSapi = '';
+  String nameSapi = '';
   String jenisSapi = '';
   DateTime selectedDate = DateTime.now();
   double tinggiSapi = 0;
@@ -164,44 +163,43 @@ String nameSapi = '';
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
                                 const Text('Nama Sapi*',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                      )),
-                                  const SizedBox(height: 10),
-                                  // Tinggi Sapi
-                                  TextField(
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    )),
+                                const SizedBox(height: 10),
+                                // Tinggi Sapi
+                                TextField(
                                   controller: _nameSapiController,
-
-                                    keyboardType: TextInputType.text,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        nameSapi = value;
-                                      });
-                                    },
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Kosongkan maka nama akan diisi otomatis',
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color(
-                                                0xFF20A577)), // Warna border ketika TextField fokus
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors
-                                                .red), // Warna border ketika ada error
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors
-                                                .red), // Warna border ketika fokus dan ada error
-                                      ),
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      nameSapi = value;
+                                    });
+                                  },
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText:
+                                        'Kosongkan maka nama akan diisi otomatis',
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(
+                                              0xFF20A577)), // Warna border ketika TextField fokus
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Warna border ketika ada error
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Warna border ketika fokus dan ada error
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
+                                ),
+                                const SizedBox(height: 16),
                                 const Text('Jenis Sapi*',
                                     style: TextStyle(
                                       fontSize: 13,
@@ -450,7 +448,8 @@ String nameSapi = '';
                                         // Creating a Cattle object
                                         final newCattle = Cattle(
                                           id: widget.cattle?.id,
-                                          name: nameSapi, // Use a TextField to capture name if required
+                                          name:
+                                              nameSapi, // Use a TextField to capture name if required
                                           breedId: selectedBreed?.id ??
                                               widget.cattle!.breedId,
                                           gender: kelaminSapi,

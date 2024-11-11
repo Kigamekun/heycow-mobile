@@ -235,7 +235,7 @@ class CustomCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
+                      SizedBox(
                         width: screenWidth * 0.5,
                         child: Text(
                           pengangon.name,

@@ -119,7 +119,7 @@ class MPPTextField extends StatefulWidget {
   final bool isDisabled;
 
   const MPPTextField({
-    Key? key,
+    super.key,
     required this.onChanged,
     required this.label,
     this.borderWidth = 1.0,
@@ -128,9 +128,10 @@ class MPPTextField extends StatefulWidget {
     this.isMultiline = false, // Default to single line
     this.initialValue,
     this.isDisabled = false,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MPPTextFieldState createState() => _MPPTextFieldState();
 }
 

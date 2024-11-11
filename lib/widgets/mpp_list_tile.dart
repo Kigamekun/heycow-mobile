@@ -7,11 +7,11 @@ class MPPListTile extends StatelessWidget {
   final String? description;
 
   const MPPListTile({
-    Key? key,
+    super.key,
     required this.leading,
     required this.header,
     this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

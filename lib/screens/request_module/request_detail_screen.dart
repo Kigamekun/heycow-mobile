@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
 import 'package:get/get.dart';
 
 class RequestDetailScreen extends StatelessWidget {
   final String id;
 
-  RequestDetailScreen({required this.id});
+  const RequestDetailScreen({super.key, required this.id});
 
   Future<void> approveRequest() async {
     try {
@@ -21,7 +20,6 @@ class RequestDetailScreen extends StatelessWidget {
   }
 
   Future<void> rejectRequest() async {
-    print('ada');
     try {
       final response = await GetConnect().put('https://heycow.my.id/request-angon/$id/reject', {});
       if (response.isOk) {
@@ -81,7 +79,7 @@ class RequestDetailScreen extends StatelessWidget {
                     // Main Content (unchanged from your code)
                     
                     // Payment Status Section
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.dangerous, color: Colors.red),
                         SizedBox(width: 8),
@@ -95,7 +93,7 @@ class RequestDetailScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff20A577),
@@ -104,14 +102,14 @@ class RequestDetailScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Get.to(() => SnapScreen());
+                        // Get.to(() => SnapScreen());
                       },
                       child: const Text(
                         'Bayar',
                         style: TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     // Approve and Reject Buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

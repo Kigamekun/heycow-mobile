@@ -4,10 +4,12 @@ class Blog {
   final String? userName;
   final String title;
   final String content;
+  final String price;
   final String category;
   final String image;
   final String published;
   final int likesCount;
+  final bool isLiked;
   final int commentsCount;
 
   final String? publishedAt;
@@ -20,8 +22,10 @@ class Blog {
     required this.title,
     required this.content,
     required this.category,
+    required this.price,
     required this.image,
     required this.likesCount,
+    required this.isLiked,
     required this.commentsCount,
     required this.published,
     this.publishedAt,

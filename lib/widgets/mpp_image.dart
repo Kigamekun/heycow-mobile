@@ -5,10 +5,10 @@ class MPPImage extends StatelessWidget {
   final double height;
 
   const MPPImage({
-    Key? key,
+    super.key,
     this.width = 100,
     this.height = 100,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

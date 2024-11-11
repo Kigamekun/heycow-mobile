@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/controllers/community_controller.dart';
 import 'package:get/get.dart';
+import 'package:heycowmobileapp/screens/community_module/community_create_screen.dart';
 import 'package:heycowmobileapp/screens/community_module/community_detail_screen.dart';
+import 'package:heycowmobileapp/controllers/auth_controller.dart';
+import 'package:http/http.dart' as http;
 
 class CommunityScreen extends StatefulWidget {
   static const routeName = '/beranda';
@@ -15,11 +18,50 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   final CommunityController communitycontroller =
       Get.put(CommunityController());
+  final AuthController _authController = Get.find<AuthController>();
+  final TextEditingController searchController = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
     communitycontroller.fetchBlogItems();
+    searchController.addListener(() {
+      communitycontroller.fetchBlogItems(query: searchController.text);
+    });
+  }
+
+ @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+
+  Future<void> likeBlog(int id) async {
+    final url = Uri.parse(
+      'https://heycow.my.id/api/blog-posts/$id/likes',
+    );
+    try {
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${_authController.accessToken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        communitycontroller.fetchBlogItems();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to like blog')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   @override
@@ -67,36 +109,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Colors.white, // Set background to white
-                                  shape:
-                                      const CircleBorder(), // Circle shape without border
-                                  padding: const EdgeInsets.all(
-                                      0), // Adjust padding to control the size
-                                ),
-                                child: const Icon(
-                                    Icons.video_camera_back_outlined,
-                                    color:
-                                        Colors.black), // Icon inside the button
-                              ),
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Colors.white, // Set background to white
-                                  shape:
-                                      const CircleBorder(), // Circle shape without border
-                                  padding: const EdgeInsets.all(
-                                      0), // Adjust padding to control the size
-                                ),
-                                child: const Icon(Icons.image_outlined,
-                                    color:
-                                        Colors.black), // Icon inside the button
-                              ),
-                              ElevatedButton(
                                 onPressed: () {
+                                  Get.to(() => const CommunityCreateScreen());
                                   // Get.to(() => zconst AddCattleScreen());
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -133,8 +147,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                               )
                             ],
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
+                          child:  Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -142,9 +156,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                   children: [
                                     Expanded(
                                       child: TextField(
-                                        decoration: InputDecoration(
+                                        controller: searchController,
+                                        decoration: const InputDecoration(
                                           hintText:
-                                              "Search Cattle Name or Device ID",
+                                              "Search Blog Title", // Search hint text
                                           hintStyle: TextStyle(
                                             color: Colors.grey, // Text color
                                           ),
@@ -153,7 +168,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                         ),
                                       ),
                                     ),
-                                    Icon(
+                                    const Icon(
                                       Icons.search,
                                       color: Colors.black, // Search icon color
                                     ),
@@ -181,7 +196,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => CommunityDetailScreen(blog: blog), // Pindah ke layar detail
+                                    builder: (context) => CommunityDetailScreen(
+                                        id: blog.id
+                                            as int), // Pindah ke layar detail
                                   ),
                                 );
                               },
@@ -198,34 +215,65 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Colors.black,
-                                            child: Icon(Icons.person,
-                                                color: Colors.white),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          Row(
                                             children: [
-                                              Text(
-                                                blog.userName ?? '',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
+                                              const CircleAvatar(
+                                                radius: 24,
+                                                backgroundColor: Colors.black,
+                                                child: Icon(Icons.person,
+                                                    color: Colors.white),
                                               ),
-                                              Text(
-                                                blog.publishedAt ?? '',
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 12,
-                                                ),
+                                              const SizedBox(width: 12),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    blog.userName ?? '',
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    blog.publishedAt ?? '',
+                                                    style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
+                                          if (blog.category ==
+                                              'jual') // Check if price is not null
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 10.0),
+                                              decoration: BoxDecoration(
+                                                color: Colors
+                                                    .green, // Background color for the badge
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        12.0), // Rounded corners
+                                              ),
+                                              child: Text(
+                                                blog.price,
+                                                style: const TextStyle(
+                                                  color: Colors
+                                                      .white, // Text color for the badge
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )
                                         ],
                                       ),
                                     ),
@@ -233,11 +281,21 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16.0),
-                                      child: Text(
-                                        blog.content,
-                                        style: const TextStyle(fontSize: 14),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start, // Aligns children to the left
+                                        children: [
+                                          Text(
+                                            blog.title,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(height: 10),
+                                        ],
                                       ),
                                     ),
+
                                     const SizedBox(height: 10),
                                     // Blog Image
                                     if (blog.image.isNotEmpty)
@@ -259,8 +317,27 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                         children: [
                                           Row(
                                             children: [
-                                              const Icon(Icons.favorite_border,
-                                                  color: Colors.black),
+                                              if ((blog
+                                                  .isLiked)) // Use ?? false to handle null cases
+                                                TextButton(
+                                                  onPressed: () => {
+                                                    // Aksi tombol pertama
+                                                    likeBlog(blog.id as int)
+                                                  },
+                                                  child: const Icon(
+                                                      Icons.favorite,
+                                                      color: Colors.red),
+                                                ),
+                                              if (!(blog.isLiked))
+                                                TextButton(
+                                                  onPressed: () => {
+                                                    // Aksi tombol pertama
+                                                    likeBlog(blog.id as int)
+                                                  },
+                                                  child: const Icon(
+                                                      Icons.favorite_border,
+                                                      color: Colors.black),
+                                                ),
                                               const SizedBox(width: 8),
                                               Text(
                                                 '${blog.likesCount} Likes',

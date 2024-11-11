@@ -9,16 +9,17 @@ class MPPDropdown extends StatefulWidget {
   final String? initialValue; // Add an optional initialValue parameter
 
   const MPPDropdown({
-    Key? key,
+    super.key,
     required this.controller,
     required this.label,
     this.borderWidth = 1.0,
     this.dropdownItems,
     this.onChanged,
     this.initialValue, // Initialize the initialValue parameter
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MPPDropdownState createState() => _MPPDropdownState();
 }
 
@@ -62,10 +63,10 @@ class _MPPDropdownState extends State<MPPDropdown> {
                 }
               });
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               filled: true, // Enables the fill color
               fillColor: Colors.white, // Sets the background color to white
-              contentPadding: const EdgeInsets.all(8.0),
+              contentPadding: EdgeInsets.all(8.0),
               border: InputBorder.none, // Removes the default border
             ),
           ),

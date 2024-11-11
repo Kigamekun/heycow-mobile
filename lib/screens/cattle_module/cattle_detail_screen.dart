@@ -3,8 +3,10 @@ import 'package:heycowmobileapp/controllers/cattle_controller.dart';
 import 'package:heycowmobileapp/models/cattle.dart';
 import 'package:heycowmobileapp/screens/cattle_module/assign_device_screen.dart';
 import 'package:heycowmobileapp/screens/cattle_module/edit_cattle_screen.dart';
+import 'package:heycowmobileapp/screens/cattle_module/health_monitoring_screen.dart';
 import 'package:heycowmobileapp/screens/cattle_module/pengangon_list_screen.dart'; // Import your controller
 import 'package:get/get.dart';
+import 'package:heycowmobileapp/screens/community_module/community_create_sell_screen.dart';
 
 class CattleDetailScreen extends StatefulWidget {
   final Cattle cattle;
@@ -12,6 +14,7 @@ class CattleDetailScreen extends StatefulWidget {
   const CattleDetailScreen({super.key, required this.cattle});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CattleDetailScreenState createState() => _CattleDetailScreenState();
 }
 
@@ -171,7 +174,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      'IoT ID : ${_cattle.iotDevice?.serialNumber?.toString() ?? 'N/A'}',
+                                      'IoT ID : ${_cattle.iotDevice?.serialNumber.toString() ?? 'N/A'}',
                                       style: const TextStyle(
                                         color: Colors.grey,
                                         fontSize: 14,
@@ -343,14 +346,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                         ),
                                       ),
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                EditCattleScreen(
-                                                    cattle: _cattle),
-                                          ),
-                                        );
+                                        Get.to(() => HealthMonitoringScreen());
                                         // Aksi tombol kedua
                                       },
                                       child: const Text("Detail",
@@ -435,6 +431,10 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                                 ),
                                               ),
                                               onPressed: () {
+                                                Get.to(() =>
+                                                    CommunityCreateSellScreen(
+                                                        id: _cattle.id!
+                                                    ));
                                                 // Aksi tombol kedua
                                               },
                                               child: const Text(

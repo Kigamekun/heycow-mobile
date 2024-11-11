@@ -13,10 +13,15 @@ class CommunityController extends GetxController {
 
   final AuthController _authController = Get.find<AuthController>();
 
-  Future<void> fetchBlogItems() async {
+  Future<void> fetchBlogItems({String? query}) async {
     try {
+      final url = Uri.parse(AppConstants.blogUrl).replace(
+        queryParameters: {
+          'search': query ?? '',
+        },
+      );
       final response = await http.get(
-        Uri.parse(AppConstants.blogUrl),
+        url,
         headers: <String, String>{
           'Authorization': 'Bearer ${_authController.accessToken}',
         },
@@ -40,10 +45,12 @@ class CommunityController extends GetxController {
             userId: item['user_id'],
             userName : item['user']['name'],
             content: item['content'],
+            price : item['price'].toString(),
             category: item['category'],
             image: item['full_image_url'],
             published: item['published'],
             likesCount: item['likes_count'],
+            isLiked : item['isLiked'],
             commentsCount: item['comments_count'],
             publishedAt : item['published_at'],
             createdAt: DateTime.parse(item['created_at']),

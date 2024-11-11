@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 class MPPImageProfile extends StatelessWidget {
   final String imageUrl;
 
-  const MPPImageProfile({Key? key, required this.imageUrl}) : super(key: key);
+  const MPPImageProfile({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
-    print('profile image: $imageUrl');
     return ClipOval(
       child: Image.network(imageUrl,fit: BoxFit.cover, loadingBuilder:
           (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {

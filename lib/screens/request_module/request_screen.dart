@@ -10,6 +10,7 @@ class RequestScreen extends StatefulWidget {
   const RequestScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RequestScreenState createState() => _RequestScreenState();
 }
 
@@ -60,8 +61,6 @@ class _RequestScreenState extends State<RequestScreen> {
         Get.snackbar("Success", "Request approved successfully");
         fetchRequests(); // Refresh requests after approval
       } else {
-        print('APPROVE REQUEST ERROR: ${response.body}');
-        print(response.body);
         Get.snackbar("Error", "Failed to approve request");
       }
     } catch (e) {
@@ -82,7 +81,6 @@ class _RequestScreenState extends State<RequestScreen> {
         Get.snackbar("Success", "Request rejected successfully");
         fetchRequests(); // Refresh requests after rejection
       } else {
-        print(response.body);
         Get.snackbar("Error", "Failed to reject request");
       }
     } catch (e) {
@@ -95,7 +93,7 @@ class _RequestScreenState extends State<RequestScreen> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('DSDSD',
+        title: const Text('Requests',
             style: TextStyle(color: Colors.white, fontSize: 16)),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -109,11 +107,11 @@ class _RequestScreenState extends State<RequestScreen> {
       ),
       backgroundColor: const Color(0xFFEAEBED),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : requests.isEmpty
-              ? Center(child: Text("No requests found"))
+              ? const Center(child: Text("No requests found"))
               : ListView.builder(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   itemCount: requests.length,
                   itemBuilder: (context, index) {
                     final request = requests[index];
@@ -169,7 +167,7 @@ class RequestItem extends StatelessWidget {
   final VoidCallback onApprove;
   final VoidCallback onDecline;
 
-  RequestItem({
+  const RequestItem({
     super.key,
     required this.date,
     required this.title,
@@ -185,18 +183,18 @@ class RequestItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ContractDetailScreen(
-              id: 1,
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const ContractDetailScreen(
+        //       id: 1,
+        //     ),
+        //   ),
+        // );
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 16),
-        padding: EdgeInsets.all(16.0),
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -204,7 +202,7 @@ class RequestItem extends StatelessWidget {
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
               blurRadius: 6,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -215,14 +213,14 @@ class RequestItem extends StatelessWidget {
               date,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -231,9 +229,9 @@ class RequestItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: statusColor,
                     borderRadius: BorderRadius.circular(20),
@@ -241,10 +239,10 @@ class RequestItem extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(icon, color: Colors.white, size: 16),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         statusText,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
@@ -256,7 +254,7 @@ class RequestItem extends StatelessWidget {
               ],
             ),
             if (isPengangon) ...[
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -273,7 +271,7 @@ class RequestItem extends StatelessWidget {
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff20A577),

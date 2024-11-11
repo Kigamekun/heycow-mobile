@@ -6,8 +6,8 @@ import 'package:heycowmobileapp/widgets/mpp_image.dart';
 
 class MPPAppBar extends StatelessWidget implements PreferredSizeWidget {
   MPPAppBar({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final AuthController _authController = Get.find<AuthController>();
 

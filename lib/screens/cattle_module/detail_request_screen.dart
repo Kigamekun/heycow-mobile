@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/models/cattle.dart';
-import 'package:heycowmobileapp/screens/cattle_module/detail_contract_screen.dart';
-import 'package:heycowmobileapp/screens/cattle_module/pengangon_list_screen.dart'; // Import your controller
 import 'package:get/get.dart';
-import 'package:heycowmobileapp/screens/beranda_module/beranda_screen.dart';
-import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
 import 'package:heycowmobileapp/screens/main_screen.dart'; // Import MainScreen
 
 class DetailRequestScreen extends StatelessWidget {
-  const DetailRequestScreen({super.key});
+  final Map<String, dynamic> data; // Add a field to hold the data
+
+  const DetailRequestScreen({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         // Navigate to MainScreen and prevent back navigation
-        Get.offAll(() => MainScreen());
+        Get.offAll(() => const MainScreen());
         return false; // Prevent the default back action
       },
       child: Scaffold(
@@ -50,7 +48,9 @@ class DetailRequestScreen extends StatelessWidget {
                               height: 250, // Height of the gradient container
                               width: double.infinity,
                             ),
-                            SizedBox(height: MediaQuery.of(context).size.height * 0.7)
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7)
                           ],
                         ),
                         Positioned(
@@ -99,13 +99,14 @@ class DetailRequestScreen extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 50),
                                           // Details Section
+                                          _buildDetailsRow("Nama Pengangon",
+                                              data['nama_pengangon']),
                                           _buildDetailsRow(
-                                              "Nama Pengangon", "Mamat Suramat"),
+                                              "Nama Sapi", data['nama_sapi']),
+                                          _buildDetailsRow("Durasi Mengangon",
+                                              "${data['durasi']} Bulan"),
                                           _buildDetailsRow(
-                                              "Nama Sapi", "Catle 1"),
-                                          _buildDetailsRow(
-                                              "Durasi Mengangon", "28-11-2024"),
-                                          _buildDetailsRow("Biaya", "Rp 500.000"),
+                                              "Biaya",  data['biaya']),
                                           const SizedBox(height: 20),
                                           const Divider(),
                                           // Activity Section
@@ -126,18 +127,19 @@ class DetailRequestScreen extends StatelessWidget {
                                             icon: Icons.check_circle,
                                             color: Colors.green,
                                             title: "Data Diterima",
-                                            dateTime: "28 Oktober 2024 • 09:11",
+                                            dateTime: data['tanggal'],
                                           ),
                                           _buildActivityItem(
                                             icon: Icons.access_time,
                                             color: Colors.yellow[700]!,
                                             title: "Menunggu Konfirmasi",
-                                            dateTime: "28 Oktober 2024 • 09:11",
+                                            dateTime: data['tanggal'],
                                           ),
                                           const SizedBox(height: 20),
                                           // Close Button
                                           SizedBox(
-                                            width: double.infinity, // Ensure button fills the width
+                                            width: double
+                                                .infinity, // Ensure button fills the width
                                             child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:
@@ -149,7 +151,8 @@ class DetailRequestScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               onPressed: () {
-                                               Get.offAll(() => MainScreen()); // Navigate to MainScreen
+                                                Get.offAll(() =>
+                                                    const MainScreen()); // Navigate to MainScreen
                                               },
                                               child: const Text(
                                                 'Tutup',
@@ -180,24 +183,6 @@ class DetailRequestScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  TableRow _buildTableRow(String label, String value) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(value),
-        ),
-      ],
     );
   }
 

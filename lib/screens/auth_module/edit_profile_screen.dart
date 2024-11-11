@@ -1,10 +1,11 @@
+// ignore_for_file: unused_element, use_build_context_synchronously
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
-
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -16,7 +17,9 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
-  
+
+  final dio.Dio _dio = dio.Dio(); // Use 'dio.Dio' with alias
+
   File? _selectedImage;
 
   // Helper to pick date
@@ -46,45 +49,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // Function to submit form data along with image
   Future<void> _submitForm() async {
-    
     if (_formKey.currentState!.validate()) {
-      // final formData = dio.FormData.fromMap({
-      //   "nama": "Mulyadi", // Add other form fields here
-      //   "email": "mulyadi@ymail.com",
-      //   "phone_number": "+1 234-567-890",
-      //   "farm_name": "Mulyadi Farm",
-      //   "profile_picture": _selectedImage != null
-      //       ? await dio.MultipartFile.fromFile(_selectedImage!.path,
-      //           filename: _selectedImage!.path.split('/').last)
-      //       : null,
-      // });
+      // Create FormData with user details and image file
+      final formData = dio.FormData.fromMap({
+        "nama": _authController.nama.value,
+        "email": _authController.email.value,
+        "phone_number": _authController.phone.value,
+        "address": _authController.address.value,
+        "farm_name": _authController.farmName.value,
+        "farm_address": _authController.farmAddress.value,
+        "upah": _authController.upah.value,
+        "avatar": _selectedImage != null
+            ? await dio.MultipartFile.fromFile(_selectedImage!.path,
+                filename: _selectedImage!.path.split('/').last)
+            : null,
+      });
 
       try {
-        final dio = Dio();
-        final response = await dio.post(
-          'https://your-api-url.com/updateProfile', // Ganti dengan URL API Anda
-          data: {
-            "nama": "Mulyadi", // Add other form fields here
-            "email": "",
-            "phone_number": "+1 234-567-890",
-            "farm_name": "Mulyadi Farm",
-            "profile_picture": _selectedImage != null
-                ? null
-                : null,
-          },
+        // Define the API endpoint
+        const String apiUrl = "https://heycow.my.id/api/update-profile";
+
+        // Send the formData to the server
+        final response = await _dio.post(
+          apiUrl,
+          data: formData,
+          options: dio.Options(
+            headers: {
+              "Authorization": 'Bearer ${_authController.accessToken}',
+            },
+          ),
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile updated: ${response.data}')),
-        );
+
+        if (response.statusCode == 200) {
+          // Handle success response
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Profile updated successfully!')),
+          );
+        } else {
+          print(response.data);
+          // Handle unsuccessful response
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to update profile.')),
+          );
+        }
       } catch (e) {
+        // Handle errors (e.g., network issues, server errors)
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating profile: $e')),
+          SnackBar(content: Text('An error occurred: $e')),
         );
       }
     }
   }
-   final AuthController _authController = Get.find<AuthController>();
 
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   void initState() {
@@ -121,99 +138,130 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: const EdgeInsets.only(bottom: 0),
             child: Form(
               key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15, left: 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x33959DA5),
-                                  blurRadius: 24,
-                                  offset: Offset(0, 8),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Column(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 50,
-                                        backgroundImage: _selectedImage != null
-                                            ? FileImage(_selectedImage!)
-                                            : const AssetImage(
-                                                'assets/pp.png',
-                                              ) as ImageProvider,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      TextButton(
-                                        onPressed: _pickImage,
-                                        child: const Text(
-                                          'Edit Profile Picture',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
+              child: RefreshIndicator(
+                onRefresh: _refreshProfileData, // Panggil fungsi untuk refresh
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 15, left: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x33959DA5),
+                                    blurRadius: 24,
+                                    offset: Offset(0, 8),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Column(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 50,
+                                          backgroundImage:
+                                              _selectedImage != null
+                                                  ? FileImage(_selectedImage!)
+                                                  : NetworkImage(
+                                                      _authController
+                                                          .avatarUrl.value,
+                                                    ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        TextButton(
+                                          onPressed: _pickImage,
+                                          child: const Text(
+                                            'Edit Profile Picture',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 30),
+                                  _buildTextField(
+                                      label: 'Nama',
+                                      initialValue: _authController.nama.value),
+                                  const SizedBox(height: 20),
+                                  _buildTextField(
+                                      label: 'Email',
+                                      initialValue:
+                                          _authController.email.value),
+                                  const SizedBox(height: 20),
+                                  _buildTextField(
+                                      label: 'Phone Number',
+                                      initialValue:
+                                          _authController.phone.value),
+                                  const SizedBox(height: 20),
+                                  _buildTextField(
+                                      label: 'Address',
+                                      initialValue:
+                                          _authController.address.value),
+                                  const SizedBox(height: 20),
+                                  if (_authController.farm.value == 1) ...[
+                                    _buildTextField(
+                                        label: 'Farm Name',
+                                        initialValue:
+                                            _authController.farmName.value),
+                                    const SizedBox(height: 20),
+                                    _buildTextField(
+                                        label: 'Farm Address',
+                                        initialValue:
+                                            _authController.farmAddress.value),
+                                    const SizedBox(height: 20),
+                                  ],
+                                  if (_authController.isPengangon.value ==
+                                      1) ...[
+                                    _buildTextField(
+                                        label: 'Upah',
+                                        initialValue:
+                                            _authController.upah.value),
+                                    const SizedBox(height: 20),
+                                  ],
+                                  const SizedBox(height: 40),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: _submitForm,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFF20A577),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 30),
-                                _buildTextField(
-                                    label: 'Nama',
-                                    initialValue: _authController.nama.value),
-                                const SizedBox(height: 20),
-                                _buildTextField(
-                                    label: 'Email',
-                                    initialValue: _authController.email.value),
-                                const SizedBox(height: 20),
-                                _buildTextField(
-                                    label: 'Phone Number',
-                                    initialValue: _authController.phone.value),
-                                const SizedBox(height: 20),
-                                _buildTextField(
-                                    label: 'Farm Name',
-                                    initialValue: _authController.farmName.value),
-                                const SizedBox(height: 40),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: _submitForm,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF20A577),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 16),
-                                    ),
-                                    child: const Text(
-                                      'Submit',
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      child: const Text(
+                                        'Submit',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 60),
-                        ],
+                            const SizedBox(height: 60),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -223,70 +271,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-}
-
-// AlertBox widget
-class AlertBox extends StatelessWidget {
-  const AlertBox({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(
-        color: Colors.yellow,
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.info, color: Colors.white),
-          SizedBox(width: 8),
-          Expanded(child: Text('Ada bagian form yang tidak terisi')),
-        ],
-      ),
-    );
+// Fungsi untuk refresh data profil
+  Future<void> _refreshProfileData() async {
+    _authController.getUser(); // Panggil fungsi untuk mendapatkan data terbaru
+    setState(() {}); // Update tampilan setelah data diperbarui
   }
-}
-
-// GenderButton widget
-class GenderButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const GenderButton({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.isSelected,
-    required this.onTap,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.2) : Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 32, color: color),
-            const SizedBox(height: 4),
-            Text(label, style: TextStyle(color: color)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Custom TextField Widget for consistent design
 }
 
 Widget _buildTextField({required String label, required String initialValue}) {

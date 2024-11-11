@@ -8,19 +8,25 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/';
-  const MainScreen({super.key});
+  final int initialIndex;
+  const MainScreen({Key? key, this.initialIndex = 0}) : super(key: key);
 
   @override
   MainScreenState createState() => MainScreenState();
 }
 
 class MainScreenState extends State<MainScreen> {
-  var _bottomNavIndex = 0;
+  late int _bottomNavIndex;
 
-  final CattleScreen cattleScreen = CattleScreen();
-  final CommunityScreen communityScreen = CommunityScreen();
+  @override
+  void initState() {
+    super.initState();
+    _bottomNavIndex = widget.initialIndex; // Set initial index
+  }
 
-  // Define the pages for the BottomNavigationBar
+  final CattleScreen cattleScreen = const CattleScreen();
+  final CommunityScreen communityScreen = const CommunityScreen();
+
   List<Widget> _buildScreens() {
     return [
       const BerandaScreen(),
@@ -31,44 +37,24 @@ class MainScreenState extends State<MainScreen> {
     ];
   }
 
-  // Handle navigation based on the tapped index
   void _onItemTapped(int index) {
     setState(() {
       _bottomNavIndex = index;
     });
   }
 
-  // Create a GlobalKey for CattleScreen
   final GlobalKey<CattleScreenState> cattleScreenKey =
       GlobalKey<CattleScreenState>();
 
-  // Method to refresh the current screen
   Future<void> _refreshCurrentScreen() async {
-    // Simulate a network call or any other asynchronous operation
     await Future.delayed(const Duration(seconds: 1));
-
-    switch (_bottomNavIndex) {
-      case 0: // Home screen
-        break;
-      case 1: // Search screen
-        if (cattleScreenKey.currentState != null) {
-          cattleScreenKey.currentState!.refreshData();
-        }
-        break;
-      case 2: // Notifications screen
-        break;
-      case 3: // Profile screen
-        break;
-      case 4: // Cattle screen
-        break;
-      case 5: // Community screen
-        break;
+    if (_bottomNavIndex == 1 && cattleScreenKey.currentState != null) {
+      cattleScreenKey.currentState!.refreshData();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get the list of screens
     List<Widget> body = _buildScreens();
 
     return Scaffold(
@@ -78,7 +64,7 @@ class MainScreenState extends State<MainScreen> {
           children: [
             body[_bottomNavIndex],
             Positioned(
-              bottom: 16, // Adjust the position from the bottom
+              bottom: 16,
               left: 16,
               right: 16,
               child: Container(
@@ -112,7 +98,6 @@ class MainScreenState extends State<MainScreen> {
                       icon: PhosphorIcon(
                         PhosphorIconsFill.squaresFour,
                         size: 25.0,
-                        semanticLabel: 'New Note',
                       ),
                       label: 'Home',
                     ),
@@ -120,31 +105,27 @@ class MainScreenState extends State<MainScreen> {
                       icon: PhosphorIcon(
                         PhosphorIconsFill.cow,
                         size: 25.0,
-                        semanticLabel: 'New Note',
                       ),
-                      label: 'Search',
+                      label: 'Cattle',
                     ),
                     BottomNavigationBarItem(
                       icon: PhosphorIcon(
                         PhosphorIconsFill.scan,
                         size: 25.0,
-                        semanticLabel: 'New Note',
                       ),
-                      label: 'Notifications',
+                      label: 'QR',
                     ),
                     BottomNavigationBarItem(
                       icon: PhosphorIcon(
                         PhosphorIconsFill.usersThree,
                         size: 25.0,
-                        semanticLabel: 'New Note',
                       ),
-                      label: 'Profile',
+                      label: 'Community',
                     ),
                     BottomNavigationBarItem(
                       icon: PhosphorIcon(
                         PhosphorIconsFill.user,
                         size: 25.0,
-                        semanticLabel: 'New Note',
                       ),
                       label: 'Profile',
                     ),

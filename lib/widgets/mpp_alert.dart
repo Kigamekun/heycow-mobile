@@ -6,11 +6,11 @@ class MPPAlert extends StatelessWidget {
   final String subtitle;
 
   const MPPAlert({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.title,
     required this.subtitle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

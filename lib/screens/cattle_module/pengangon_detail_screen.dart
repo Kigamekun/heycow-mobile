@@ -1,8 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:heycowmobileapp/models/pengangon.dart';
-import 'package:heycowmobileapp/screens/cattle_module/detail_contract_screen.dart';
 import 'package:heycowmobileapp/screens/cattle_module/detail_request_screen.dart';
-import 'package:heycowmobileapp/screens/cattle_module/pengangon_list_screen.dart'; // Import your controller
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,7 +57,7 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
     if (_selectedDuration == null) {
       // Handle jika durasi belum dipilih
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Pilih durasi terlebih dahulu')),
+        const SnackBar(content: Text('Pilih durasi terlebih dahulu')),
       );
       return;
     }
@@ -78,15 +78,17 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Request berhasil')),
+        const SnackBar(content: Text('Request berhasil')),
       );
 
-      Get.to(() => const DetailRequestScreen());
-      
+          final body = json.decode(response.body);
+
+    // Pass the 'data' to the DetailRequestScreen
+    Get.to(() => DetailRequestScreen(data: body['data']));
+    
     } else {
-      print(response.body);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal melakukan request')),
+        const SnackBar(content: Text('Gagal melakukan request')),
       );
     }
   }
@@ -440,7 +442,7 @@ class CustomCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                     width: screenWidth * 0.5,
                     child: Text(
                       pengangon.name,

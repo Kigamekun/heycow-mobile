@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
-import 'package:get/get.dart';
 
 class HistoryDetailScreen extends StatelessWidget {
+  const HistoryDetailScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,7 +153,7 @@ class HistoryDetailScreen extends StatelessWidget {
                     const Divider(height: 30),
 
                     // Payment Status
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.dangerous, color: Colors.red),
                         SizedBox(width: 8),
@@ -169,7 +169,7 @@ class HistoryDetailScreen extends StatelessWidget {
                         // Payment Button
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff20A577),
@@ -179,7 +179,7 @@ class HistoryDetailScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Get.to(() => SnapScreen()); //
+                        // Get.to(() => SnapScreen()); //
                         // Aksi tombol kedua
                       },
                       child: const Text(

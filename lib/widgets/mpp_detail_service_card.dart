@@ -14,7 +14,7 @@ class MPPDetailServiceCard extends StatelessWidget {
   final String answer;
 
   const MPPDetailServiceCard({
-    Key? key,
+    super.key,
     required this.badgeText,
     required this.badgeColor,
     required this.date,
@@ -22,7 +22,7 @@ class MPPDetailServiceCard extends StatelessWidget {
     required this.serviceName,
     required this.question,
     required this.answer,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

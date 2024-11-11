@@ -4,16 +4,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
-import 'package:heycowmobileapp/controllers/beranda_controller.dart';
 import 'package:heycowmobileapp/controllers/cattle_controller.dart';
-import 'package:heycowmobileapp/models/cattle.dart';
 import 'package:heycowmobileapp/screens/cattle_module/cattle_detail_screen.dart';
 import 'package:heycowmobileapp/screens/history_module/history_screen.dart';
 import 'package:heycowmobileapp/screens/request_module/request_screen.dart';
+import 'package:heycowmobileapp/screens/user_module/notification_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
 import 'package:heycowmobileapp/app/constants_variable.dart';
@@ -34,7 +31,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
   final AuthController _authController = Get.find<AuthController>();
   final CattleController cattleController = Get.put(CattleController());
 
-  int _selectedIndex = 0; // To keep track of selected index
+  final int _selectedIndex = 0; // To keep track of selected index
 
   int cattleSick = 0;
   int cattleHealthy = 0;
@@ -46,12 +43,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
   List<dynamic> cattle = [];
 
   List<_SalesData> data = [];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   void initState() {
@@ -79,7 +70,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
         cattleDead = datas['cattle_dead'];
         iotDevices = datas['iot_devices'];
         pengangon = datas['pengangon'];
-        farm = datas['farm']['name'];
+        farm = datas['farm'] == null ? '' : datas['farm']['name'];
         cattleCount = datas['cattle_count'];
         cattle = datas['cattle'];
 
@@ -89,10 +80,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
           _SalesData('Mati', cattleHealthy.toDouble(), const Color(0xFF20A577)),
         ];
       });
-    } else {
-      // Penanganan error jika ada kesalahan saat fetch data
-      print('Failed to load data');
-    }
+    } else {}
   }
 
   @override
@@ -136,6 +124,46 @@ class _BerandaScreenState extends State<BerandaScreen> {
                           ),
                           const SizedBox(height: 95),
                         ],
+                      ),
+
+                      // button notif with number
+
+                      Positioned(
+                        top: 30,
+                        right: 16,
+                        child: IconButton(
+                          icon: Stack(
+                            children: <Widget>[
+                              const Icon(Icons.notifications, size: 30),
+                              Positioned(
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 12,
+                                    minHeight: 12,
+                                  ),
+                                  child: const Text(
+                                    '3', // Angka notifikasi
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          onPressed: () {
+                            Get.to(() => const NotificationScreen());
+                            // Aksi ketika tombol notifikasi ditekan
+                          },
+                        ),
                       ),
                       Positioned(
                         top: 150,
@@ -204,7 +232,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       context,
                                       'assets/contract.png',
                                       'Contract',
-                                      ContractScreen(),
+                                      const ContractScreen(),
                                     ),
 
                                     // History Button
@@ -212,7 +240,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       context,
                                       'assets/history.png',
                                       'History',
-                                      HistoryScreen(), // Replace with the screen for "History"
+                                      const HistoryScreen(), // Replace with the screen for "History"
                                     ),
 
                                     // Request Button
@@ -220,7 +248,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       context,
                                       'assets/request.png',
                                       'Request',
-                                      RequestScreen(), // Replace with the screen for "Request"
+                                      const RequestScreen(), // Replace with the screen for "Request"
                                     ),
                                   ],
                                 ),
@@ -280,7 +308,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      Container(
+                                      SizedBox(
                                         height: 145,
                                         child: SfCircularChart(
                                           series: <CircularSeries<_SalesData,
@@ -345,7 +373,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                 MainAxisAlignment.start,
                                             children: [
                                               const PhosphorIcon(
-                                                PhosphorIconsRegular.ear,
+                                                PhosphorIconsRegular.lasso,
                                                 size: 45.0,
                                                 semanticLabel: 'New Note',
                                               ),
@@ -368,7 +396,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                     ),
                                                   ),
                                                   const Text(
-                                                    'Ear Tag ',
+                                                    'Necklace ',
                                                     style: TextStyle(
                                                       color: Color(0xff20212B),
                                                       fontSize: 10,

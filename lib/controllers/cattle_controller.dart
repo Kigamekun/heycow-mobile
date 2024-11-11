@@ -20,7 +20,6 @@ class CattleController extends GetxController {
           'search': query ?? '',
         },
       );
-
       final response = await http.get(
         url,
         headers: <String, String>{
@@ -31,7 +30,7 @@ class CattleController extends GetxController {
         log('ada disini');
         final jsonResponse = jsonDecode(response.body);
         log('Response JSON: $jsonResponse');
-        final jsonData = jsonResponse['data']?['data'];
+        final jsonData = jsonResponse['data'];
         if (jsonData == null || jsonData.isEmpty) {
           log('No cattle items found or jsonData is empty.');
           cattleItems.assignAll([]); // Assign an empty list to cattleItems
@@ -56,6 +55,12 @@ class CattleController extends GetxController {
             userId: item['farm'] != null ? item['farm']['user_id'] : null,
             iotDeviceId: item['iot_device_id'],
             image: item['image'],
+            temperature: item['first_health_record'] != null
+                ? item['first_health_record']['temperature']
+                : null,
+            healthStatus: item['first_health_record'] != null
+                ? item['first_health_record']['status']
+                : null,
             iotDevice: item['iot_device'] != null
                 ? IoTDevice(
                     id: item['iot_device']['id'],
@@ -98,6 +103,12 @@ class CattleController extends GetxController {
           userId: jsonData['user_id'],
           iotDeviceId: jsonData['iot_device_id'],
           image: jsonData['image'],
+          temperature: jsonData['healthRecords'] != null
+              ? jsonData['healthRecords']['temperature']
+              : null,
+          healthStatus: jsonData['healthRecords'] != null
+              ? jsonData['healthRecords']['status']
+              : null,
           iotDevice: jsonData['iot_device'] != null
               ? IoTDevice(
                   id: jsonData['iot_device']['id'],
@@ -193,7 +204,7 @@ class CattleController extends GetxController {
             'Authorization': 'Bearer ${_authController.accessToken}',
           });
       if (response.statusCode == 200) {
-         cattleItems.removeWhere((cattle) => cattle.id == id);
+        cattleItems.removeWhere((cattle) => cattle.id == id);
         log('Cattle deleted successfully');
         fetchCattleItems(); // Refresh cattle list after deletion
       } else {
@@ -332,8 +343,12 @@ class CattleController extends GetxController {
                   qrImage: "",
                 )
               : null,
-          temperature: 'Unknown',
-          healthStatus: 'Unknown',
+          temperature: jsonData['healthRecords'] != null
+              ? jsonData['healthRecords']['temperature']
+              : null,
+          healthStatus: jsonData['healthRecords'] != null
+              ? jsonData['healthRecords']['status']
+              : null,
         );
         return cattle;
       } else {

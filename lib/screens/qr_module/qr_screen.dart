@@ -110,7 +110,7 @@ class _QRScreenState extends State<QRScreen> {
           top: Radius.circular(25.0),
         ),
       ),
-      backgroundColor: Color(0xffEAEBED),
+      backgroundColor: const Color(0xffEAEBED),
       builder: (BuildContext context) {
         return DraggableScrollableSheet(
           expand: false,
@@ -159,7 +159,7 @@ class _QRScreenState extends State<QRScreen> {
                         // Delete function
                       },
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
 
@@ -206,7 +206,7 @@ class _QRScreenState extends State<QRScreen> {
                               _buildTableRow('Battery', '87%'),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           const Align(
@@ -376,7 +376,7 @@ class CattleCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: status == 'sakit'
                               ? Colors.red
-                              : Color(0xFF20A577),
+                              : const Color(0xFF20A577),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -393,7 +393,7 @@ class CattleCard extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: iotId == 'N/A' ? Colors.red : Color(0xFF20A577),
+                      color: iotId == 'N/A' ? Colors.red : const Color(0xFF20A577),
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: const [
                         BoxShadow(

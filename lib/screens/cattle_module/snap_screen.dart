@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:heycowmobileapp/screens/contract_module/contract_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:heycowmobileapp/controllers/auth_controller.dart';
-import 'package:get/get.dart';
 
 class SnapScreen extends StatefulWidget {
-  const SnapScreen({Key? key}) : super(key: key);
+  final int id;
+
+  const SnapScreen({super.key, required this.id});
 
   @override
   State<SnapScreen> createState() => _SnapScreenState();
@@ -17,8 +16,9 @@ class _SnapScreenState extends State<SnapScreen> {
   String? snapToken;
   bool isLoading = true; // For loading indicator
 
-  final AuthController _authController = Get.find<AuthController>();
-
+  bool isPayed = false;
+  bool _isLoading = false;
+  
   @override
   void initState() {
     super.initState();
@@ -26,7 +26,40 @@ class _SnapScreenState extends State<SnapScreen> {
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted) // Enable JavaScript
     // getSnapToken(); // Fetch the Snap token
-     ..loadRequest(Uri.parse("https://heycow.my.id/transactions/create-charge"));
+    ..setNavigationDelegate(
+      NavigationDelegate(
+        onProgress: (int progress) {
+          setState(() {
+            _isLoading = true;
+          });
+        },
+        onPageStarted: (String url) {
+          setState(() {
+            _isLoading = false;
+          });
+        },
+        onPageFinished: (String url) {
+          setState(() {
+            _isLoading = false;
+          });
+        },
+        onWebResourceError: (WebResourceError error) {},
+        onNavigationRequest: (NavigationRequest request) {
+          if (request.url
+                  .startsWith('https://heycow.my.id/pay-api-finish') ||
+              request.url.startsWith('https://heycow.my.id/history') ||
+              request.url.startsWith('https://heycow.my.id/login')) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ContractScreen()),
+            );
+            return NavigationDecision.prevent;
+          }
+          return NavigationDecision.navigate;
+        },
+      ),
+    )
+     ..loadRequest(Uri.parse('https://heycow.my.id/transactions/create-charge/${widget.id}'));
   }
 
   @override
