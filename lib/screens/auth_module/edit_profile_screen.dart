@@ -22,6 +22,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   File? _selectedImage;
 
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  late TextEditingController _addressController;
+  late TextEditingController _farmNameController;
+  late TextEditingController _farmAddressController;
+  late TextEditingController _upahController;
+
   // Helper to pick date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -52,13 +60,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_formKey.currentState!.validate()) {
       // Create FormData with user details and image file
       final formData = dio.FormData.fromMap({
-        "nama": _authController.nama.value,
-        "email": _authController.email.value,
-        "phone_number": _authController.phone.value,
-        "address": _authController.address.value,
-        "farm_name": _authController.farmName.value,
-        "farm_address": _authController.farmAddress.value,
-        "upah": _authController.upah.value,
+        "nama": _nameController.text,
+        "email": _emailController.text,
+        "phone_number": _phoneController.text,
+        "address": _addressController.text,
+        "farm_name": _farmNameController.text,
+        "farm_address": _farmAddressController.text,
+        "upah": _upahController.text,
         "avatar": _selectedImage != null
             ? await dio.MultipartFile.fromFile(_selectedImage!.path,
                 filename: _selectedImage!.path.split('/').last)
@@ -82,6 +90,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
         if (response.statusCode == 200) {
           // Handle success response
+          _authController.getUser(); // Call the getUserData method
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profile updated successfully!')),
           );
@@ -106,6 +116,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     _authController.getUser(); // Call the getUserData method
+
+    _nameController = TextEditingController(text: _authController.nama.value);
+    _emailController = TextEditingController(text: _authController.email.value);
+    _phoneController = TextEditingController(text: _authController.phone.value);
+    _addressController =
+        TextEditingController(text: _authController.address.value);
+    _farmNameController =
+        TextEditingController(text: _authController.farmName.value);
+    _farmAddressController =
+        TextEditingController(text: _authController.farmAddress.value);
+    _upahController = TextEditingController(text: _authController.upah.value);
+  }
+
+  @override
+  void dispose() {
+    // Dispose of controllers
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _farmNameController.dispose();
+    _farmAddressController.dispose();
+    _upahController.dispose();
+    super.dispose();
   }
 
   @override
@@ -197,31 +231,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   const SizedBox(height: 30),
                                   _buildTextField(
                                       label: 'Nama',
+                                      controller: _nameController,
                                       initialValue: _authController.nama.value),
                                   const SizedBox(height: 20),
                                   _buildTextField(
                                       label: 'Email',
+                                      controller: _emailController,
                                       initialValue:
                                           _authController.email.value),
                                   const SizedBox(height: 20),
                                   _buildTextField(
                                       label: 'Phone Number',
+                                      controller: _phoneController,
                                       initialValue:
                                           _authController.phone.value),
                                   const SizedBox(height: 20),
                                   _buildTextField(
                                       label: 'Address',
+                                      controller: _addressController,
                                       initialValue:
                                           _authController.address.value),
                                   const SizedBox(height: 20),
                                   if (_authController.farm.value == 1) ...[
                                     _buildTextField(
                                         label: 'Farm Name',
+                                        controller: _farmNameController,
                                         initialValue:
                                             _authController.farmName.value),
                                     const SizedBox(height: 20),
                                     _buildTextField(
                                         label: 'Farm Address',
+                                        controller: _farmAddressController,
                                         initialValue:
                                             _authController.farmAddress.value),
                                     const SizedBox(height: 20),
@@ -230,6 +270,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       1) ...[
                                     _buildTextField(
                                         label: 'Upah',
+                                        controller: _upahController,
                                         initialValue:
                                             _authController.upah.value),
                                     const SizedBox(height: 20),
@@ -277,7 +318,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 }
 
-Widget _buildTextField({required String label, required String initialValue}) {
+// Widget _buildTextField({required String label, required String initialValue}) {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Text(
+//         label,
+//         style: const TextStyle(
+//           fontSize: 16,
+//           fontWeight: FontWeight.bold,
+//         ),
+//       ),
+//       const SizedBox(height: 8),
+//       TextFormField(
+//         initialValue: initialValue,
+//         decoration: InputDecoration(
+//           contentPadding:
+//               const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+//           border: OutlineInputBorder(
+//             borderRadius: BorderRadius.circular(12),
+//             borderSide: const BorderSide(color: Colors.grey),
+//           ),
+//         ),
+//       ),
+//     ],
+//   );
+// }
+
+Widget _buildTextField({
+  required String label,
+  required String initialValue,
+  TextEditingController? controller,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -290,7 +362,7 @@ Widget _buildTextField({required String label, required String initialValue}) {
       ),
       const SizedBox(height: 8),
       TextFormField(
-        initialValue: initialValue,
+        controller: controller ?? TextEditingController(text: initialValue),
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
