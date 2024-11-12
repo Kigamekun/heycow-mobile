@@ -10,6 +10,7 @@ class ContractScreen extends StatefulWidget {
   const ContractScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ContractScreenState createState() => _ContractScreenState();
 }
 

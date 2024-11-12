@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:heycowmobileapp/controllers/auth_controller.dart';
+import 'package:get/get.dart';
 
 class QRScreen extends StatefulWidget {
   static const routeName = '/beranda';
@@ -15,6 +19,8 @@ class _QRScreenState extends State<QRScreen> {
   Barcode? result;
   QRViewController? controller;
   bool _isPopupVisible = false;
+
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   void dispose() {
@@ -32,7 +38,7 @@ class _QRScreenState extends State<QRScreen> {
         setState(() {
           result = scanData;
         });
-        _showDetailBottomSheet();
+        _showDetailBottomSheet(scanData.code as String);
       }
     });
   }
@@ -80,7 +86,9 @@ class _QRScreenState extends State<QRScreen> {
             child: result != null
                 ? GestureDetector(
                     onTap: () {
-                      _showDetailBottomSheet();
+                      if (result?.code != null) {
+                        _showDetailBottomSheet(result!.code!);
+                      }
                     },
                     child: Container())
                 : Container(
@@ -98,161 +106,223 @@ class _QRScreenState extends State<QRScreen> {
     );
   }
 
-  void _showDetailBottomSheet() {
+  Future<void> _showDetailBottomSheet(String qrCode) async {
     _isPopupVisible = true;
-    controller?.pauseCamera(); // Hentikan kamera sementara saat popup muncul
+    controller?.pauseCamera(); // Pause the camera while the popup is visible
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25.0),
+    // Fetch data from API using the QR code
+    final response = await http.get(
+        Uri.parse('https://heycow.my.id/api/cattle/iot-devices/$qrCode'),
+        headers: <String, String>{
+          'Authorization': 'Bearer ${_authController.accessToken}',
+        });
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the data
+      var data = json.decode(response.body);
+
+      // Example data extraction from the response
+      var cattleData = data['data'];
+      String cattleName = cattleData['name'];
+      String iotId = cattleData['iot_device']['serial_number'];
+      String breedAndWeight =
+          "${cattleData['breed']['name']} - ${cattleData['birth_weight']} kg";
+      String healthStatus = cattleData['status'];
+// You can set it based on your data
+
+      // Show the bottom sheet with the fetched data
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0),
+          ),
         ),
-      ),
-      backgroundColor: const Color(0xffEAEBED),
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    Center(
-                      child: Container(
-                        width: 50,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(10),
+        backgroundColor: const Color(0xffEAEBED),
+        builder: (BuildContext context) {
+          return DraggableScrollableSheet(
+            expand: false,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Container(
+                          width: 50,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    // const Text(
-                    //   'Detail Scan',
-                    //   style: TextStyle(
-                    //     fontSize: 24,
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 20),
-                    // Text(
-                    //   'Scanned QR Code Data: ${result!.code}',
-                    //   style: const TextStyle(fontSize: 16),
-                    // ),
-                    CattleCard(
-                      cattleName: 'N/A', // Check for null
-                      iotId: 'N/A', // Check for null
-                      breedAndWeight: '',
-                      lastVaccinate: '12',
-                      status: "",
-                      statusIcon: Icons.check_circle,
-                      healthStatus: 'Healthy',
-                      temperature: '37',
-                      onDelete: () {
-                        // Delete function
-                      },
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x33959DA5),
-                            blurRadius: 24,
-                            offset: Offset(0, 8),
-                            spreadRadius: 0,
-                          )
-                        ],
+                      const SizedBox(height: 20),
+                      CattleCard(
+                        cattleName: cattleName,
+                        iotId: iotId,
+                        breedAndWeight: breedAndWeight,
+                        lastVaccinate: 'N/A', // Update as necessary
+                        status: healthStatus,
+                        statusIcon: Icons.check_circle,
+                        healthStatus: cattleData['healthRecords']?['status'],
+                        temperature: cattleData['healthRecords']?['temperature'],
+                        onDelete: () {
+                          // Handle delete action
+                        },
                       ),
-                      child: Column(
-                        children: [
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Data',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                      const SizedBox(height: 30,),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            right: 3, left: 3, top: 0.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x33959DA5),
+                                    blurRadius: 24,
+                                    offset: Offset(0, 8),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Data',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      // Button
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xff20A577),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        15), // Rounded corners
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              // Aksi tombol kedua
+                                            },
+                                            child: const Icon(
+                                              Icons.edit,
+                                              size: 20,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 25.0),
+                                  // Table for cattle data
+                                  Table(
+                                    border: TableBorder.all(),
+                                    columnWidths: const {
+                                      0: FixedColumnWidth(150)
+                                    },
+                                    children: [
+                                      _buildTableRow(
+                                          'Name', cattleData['name'] as String),
+                                      _buildTableRow(
+                                          'Breed',
+                                          cattleData['breed']['name']
+                                              as String),
+                                      _buildTableRow('Date of Birth',
+                                          cattleData['birth_date'] as String),
+                                      _buildTableRow('Weight',
+                                          '${cattleData['birth_weight']} kg'),
+                                      _buildTableRow('Height',
+                                          '${cattleData['birth_height']} cm'),
+                                      _buildTableRow('Gender',
+                                          cattleData['gender'] as String),
+                                      _buildTableRow(
+                                          'ID Device',
+                                          (cattleData['iot_device']
+                                                      ?['serial_number']
+                                                  .toString() ??
+                                              'N/A')),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 25.0),
+                                  const Row(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceBetween, // Center the buttons
+                                    children: [
+                                      Text(
+                                        'Health Monitoring',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 25.0),
+                                  Table(
+                                    border: TableBorder.all(),
+                                    columnWidths: const {
+                                      0: FixedColumnWidth(150)
+                                    },
+                                    children: [
+                                      _buildTableRow('Temperature',
+                                          '${cattleData['healthRecords']?['temperature']} °C'),
+                                      _buildTableRow('Status', '${cattleData['healthRecords']?['status']}'),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 100.0),
+                                ],
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          Table(
-                            border: TableBorder.all(),
-                            columnWidths: const {0: FixedColumnWidth(150)},
-                            children: [
-                              _buildTableRow('Name', "Cattle 1"),
-                              _buildTableRow('Breed', "Cattle 1"),
-                              _buildTableRow('Date of Birth', "100"),
-                              _buildTableRow('Weight', '100 kg'),
-                              _buildTableRow('Height', '48 cm'),
-                              _buildTableRow('Gender', "gender"),
-                              _buildTableRow('Vaccine', 'Vaccine 1'),
-                              _buildTableRow('ID Device', ('N/A')),
-                              _buildTableRow('Battery', '87%'),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Health Monitoring',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Table(
-                            border: TableBorder.all(),
-                            columnWidths: const {0: FixedColumnWidth(150)},
-                            children: [
-                              _buildTableRow('Body Temperature', "Cattle 1"),
-                              _buildTableRow('Activity', "Cattle 1"),
-                              _buildTableRow('Date of Birth', "100"),
-                            ],
-                          )
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Tutup bottom sheet
-                      },
-                      child: const Text('Kembali'),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close bottom sheet
+                        },
+                        child: const Text('Kembali'),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        );
-      },
-    ).whenComplete(() {
-      _isPopupVisible = false;
-      result = null; // Reset hasil scan untuk bisa scan ulang
-      controller?.resumeCamera(); // Lanjutkan kamera setelah popup ditutup
-    });
+              );
+            },
+          );
+        },
+      ).whenComplete(() {
+        _isPopupVisible = false;
+        result = null; // Reset scan result for a new scan
+        controller?.resumeCamera(); // Resume the camera
+      });
+    } else {
+      // Handle error if the request fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch data: ${response.statusCode}')),
+      );
+    }
   }
 
   TableRow _buildTableRow(String label, String value) {
@@ -393,7 +463,8 @@ class CattleCard extends StatelessWidget {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: iotId == 'N/A' ? Colors.red : const Color(0xFF20A577),
+                      color:
+                          iotId == 'N/A' ? Colors.red : const Color(0xFF20A577),
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: const [
                         BoxShadow(

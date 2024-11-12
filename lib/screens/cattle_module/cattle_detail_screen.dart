@@ -346,7 +346,8 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                         ),
                                       ),
                                       onPressed: () {
-                                        Get.to(() => HealthMonitoringScreen());
+                                        Get.to(() =>
+                                            const HealthMonitoringScreen());
                                         // Aksi tombol kedua
                                       },
                                       child: const Text("Detail",
@@ -384,20 +385,27 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                                 .infinity, // Memastikan tombol mengisi seluruh lebar
                                             child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    const Color(0xffFACC15),
+                                                backgroundColor: _cattle
+                                                            .diAngon ==
+                                                        true
+                                                    ? Colors
+                                                        .grey // Warna abu-abu jika disabled
+                                                    : const Color(
+                                                        0xffFACC15), // Warna biasa jika tidak disabled
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           5), // Rounded corners
                                                 ),
                                               ),
-                                              onPressed: () {
-                                                Get.to(() =>
-                                                    PengangonListScreen(
-                                                        cattleId: _cattle.id!
-                                                    ));
-                                              },
+                                              onPressed: _cattle.diAngon == true
+                                                  ? null // Jika diAngon true, tombol tidak bisa ditekan
+                                                  : () {
+                                                      Get.to(() =>
+                                                          PengangonListScreen(
+                                                              cattleId:
+                                                                  _cattle.id!));
+                                                    },
                                               child: const Text(
                                                 'Angonkan',
                                                 style: TextStyle(
@@ -433,8 +441,7 @@ class _CattleDetailScreenState extends State<CattleDetailScreen> {
                                               onPressed: () {
                                                 Get.to(() =>
                                                     CommunityCreateSellScreen(
-                                                        id: _cattle.id!
-                                                    ));
+                                                        id: _cattle.id!));
                                                 // Aksi tombol kedua
                                               },
                                               child: const Text(

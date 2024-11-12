@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/screens/community_module/community_screen.dart';
 import 'package:heycowmobileapp/screens/main_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -56,7 +55,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   Future<void> _submitForm() async {
     if (_selectedImage == null) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Please select an image')));
+          .showSnackBar(const SnackBar(content: Text('Please select an image')));
       return;
     }
 
@@ -81,16 +80,16 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Form submitted successfully')));
+            const SnackBar(content: Text('Form submitted successfully')));
         // Redirect to MainScreen with CommunityScreen as the selected tab
         Get.offAll(() => const MainScreen(initialIndex: 3));
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to submit form')));
+            .showSnackBar(const SnackBar(content: Text('Failed to submit form')));
       }
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('An error occurred')));
+          .showSnackBar(const SnackBar(content: Text('An error occurred')));
     }
   }
 
@@ -207,14 +206,14 @@ class CustomFormField extends StatelessWidget {
   final TextEditingController controller;
 
   const CustomFormField({
-    Key? key,
+    super.key,
     required this.label,
     this.isRequired = false,
     required this.hintText,
     this.suffixIcon,
     this.maxLines = 1,
     required this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

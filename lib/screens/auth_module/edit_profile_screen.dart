@@ -83,13 +83,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (response.statusCode == 200) {
           // Handle success response
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Profile updated successfully!')),
+            const SnackBar(content: Text('Profile updated successfully!')),
           );
         } else {
-          print(response.data);
           // Handle unsuccessful response
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to update profile.')),
+            const SnackBar(content: Text('Failed to update profile.')),
           );
         }
       } catch (e) {

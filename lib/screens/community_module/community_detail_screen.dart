@@ -13,6 +13,7 @@ class CommunityDetailScreen extends StatefulWidget {
   const CommunityDetailScreen({super.key, required this.id});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CommunityDetailScreenState createState() => _CommunityDetailScreenState();
 }
 
@@ -41,8 +42,6 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('masuk sini');
-        print(data['data']);
         setState(() {
           blog = data['data'];
           isLoading = false;
@@ -52,7 +51,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load blog data')),
+          const SnackBar(content: Text('Failed to load blog data')),
         );
       }
     } catch (e) {
@@ -80,10 +79,8 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
       if (response.statusCode == 200) {
         fetchBlog(); // Refresh blog data
       } else {
-        print(response.body);
-        print('adaloh');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to like blog')),
+          const SnackBar(content: Text('Failed to like blog')),
         );
       }
     } catch (e) {
@@ -113,11 +110,11 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
         _commentController.clear();
         fetchBlog(); // Refresh comments
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Comment submitted successfully')),
+          const SnackBar(content: Text('Comment submitted successfully')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit comment')),
+          const SnackBar(content: Text('Failed to submit comment')),
         );
       }
     } catch (e) {
@@ -168,31 +165,29 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                                 'https://heycow.my.id/storage/${blog['user']['avatar']}',
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 20,
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      minWidth:
-                                          MediaQuery.of(context).size.width *
-                                              0.75,
-                                      maxWidth:
-                                          MediaQuery.of(context).size.width *
-                                              0.75,
-                                      minHeight: 0.0,
-                                      maxHeight: 150.0,
-                                    ),
-                                    child: AutoSizeText(
-                                      blog['title'],
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minWidth:
+                                        MediaQuery.of(context).size.width *
+                                            0.75,
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width *
+                                            0.75,
+                                    minHeight: 0.0,
+                                    maxHeight: 150.0,
+                                  ),
+                                  child: AutoSizeText(
+                                    blog['title'],
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -325,7 +320,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             suffixIcon: IconButton(
-                              icon: Icon(Icons.send),
+                              icon: const Icon(Icons.send),
                               onPressed: submitComment,
                             ),
                           ),
@@ -354,7 +349,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.1),
                                       blurRadius: 6,
-                                      offset: Offset(0, 4),
+                                      offset: const Offset(0, 4),
                                     ),
                                   ],
                                 ),

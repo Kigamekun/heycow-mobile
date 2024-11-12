@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:heycowmobileapp/screens/contract_module/contract_detail_screen.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
 
 import 'package:get/get.dart';

@@ -29,13 +29,13 @@ class AuthController extends GetxController {
   var farmAddress = ''.obs;
   var isPengangon = 0.obs;
   var upah = ''.obs;
+  var nik = ''.obs;
 
   var password = ''.obs;
   var ulangiPassword = ''.obs;
   var avatar = ''.obs;
   var avatarUrl = ''.obs;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
   void updateUserProfile() async {
@@ -316,6 +316,7 @@ class AuthController extends GetxController {
           address.value = data['address']?.toString() ?? '';
           isPengangon.value = data['is_pengangon'] ?? 0;
           upah.value = data['upah']?.toString() ?? '';
+          nik.value = data['nik']?.toString() ?? '';
 
           if (data['farm'] != null) {
             farm.value = 1;

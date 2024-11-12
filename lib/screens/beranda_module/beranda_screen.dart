@@ -33,11 +33,12 @@ class _BerandaScreenState extends State<BerandaScreen> {
 
   final int _selectedIndex = 0; // To keep track of selected index
 
+  int countNotif = 0;
   int cattleSick = 0;
   int cattleHealthy = 0;
   int cattleDead = 0;
   int iotDevices = 0;
-  int pengangon = 0;
+  int contract = 0;
   String farm = '';
   int cattleCount = 0;
   List<dynamic> cattle = [];
@@ -65,11 +66,12 @@ class _BerandaScreenState extends State<BerandaScreen> {
     if (response.statusCode == 200) {
       final datas = json.decode(response.body);
       setState(() {
+        countNotif = datas['notif_count'];
         cattleSick = datas['cattle_sick'];
         cattleHealthy = datas['cattle_healthy'];
         cattleDead = datas['cattle_dead'];
         iotDevices = datas['iot_devices'];
-        pengangon = datas['pengangon'];
+        contract = datas['contract'];
         farm = datas['farm'] == null ? '' : datas['farm']['name'];
         cattleCount = datas['cattle_count'];
         cattle = datas['cattle'];
@@ -147,9 +149,9 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                     minWidth: 12,
                                     minHeight: 12,
                                   ),
-                                  child: const Text(
-                                    '3', // Angka notifikasi
-                                    style: TextStyle(
+                                  child:  Text(
+                                    '$countNotif', // Angka notifikasi
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 10,
                                     ),
@@ -428,7 +430,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                 MainAxisAlignment.start,
                                             children: [
                                               const PhosphorIcon(
-                                                PhosphorIconsRegular.user,
+                                                PhosphorIconsRegular.file,
                                                 size: 45.0,
                                                 semanticLabel: 'New Note',
                                               ),
@@ -442,7 +444,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    pengangon.toString(),
+                                                    contract.toString(),
                                                     style: const TextStyle(
                                                       color: Color(0xff20212B),
                                                       fontSize: 30,
@@ -451,7 +453,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                                     ),
                                                   ),
                                                   const Text(
-                                                    'Pengangon',
+                                                    'Contract',
                                                     style: TextStyle(
                                                       color: Color(0xff20212B),
                                                       fontSize: 10,

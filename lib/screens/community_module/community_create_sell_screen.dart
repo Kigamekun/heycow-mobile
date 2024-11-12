@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:heycowmobileapp/screens/community_module/community_screen.dart';
 import 'package:heycowmobileapp/screens/main_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -34,7 +33,6 @@ class _CommunityCreateSellScreenState extends State<CommunityCreateSellScreen> {
   @override
   void initState() {
     super.initState();
-    print("ID: ${widget.id}");
   }
 
   @override
@@ -58,7 +56,7 @@ class _CommunityCreateSellScreenState extends State<CommunityCreateSellScreen> {
   Future<void> _submitForm() async {
     if (_selectedImage == null) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Please select an image')));
+          .showSnackBar(const SnackBar(content: Text('Please select an image')));
       return;
     }
 
@@ -73,15 +71,6 @@ class _CommunityCreateSellScreenState extends State<CommunityCreateSellScreen> {
             filename: "image.jpg"),
       });
 
-      print({
-        "cattle_id": widget.id,
-        "title": _titleController.text,
-        "category": "jual",
-        "price": int.tryParse(_priceController.text) ?? 0,
-        "content": _contentController.text,
-        "image": await dio.MultipartFile.fromFile(_selectedImage!.path,
-            filename: "image.jpg"),
-      });
 
       final response = await _dio.post(
         'https://heycow.my.id/api/blog-posts',
@@ -95,17 +84,16 @@ class _CommunityCreateSellScreenState extends State<CommunityCreateSellScreen> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Form submitted successfully')));
+            const SnackBar(content: Text('Form submitted successfully')));
         // Redirect to MainScreen with CommunityScreen as the selected tab
         Get.offAll(() => const MainScreen(initialIndex: 3));
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to submit form')));
+            .showSnackBar(const SnackBar(content: Text('Failed to submit form')));
       }
     } catch (e) {
-      print(e.toString());
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('An error occurred')));
+          .showSnackBar(const SnackBar(content: Text('An error occurred')));
     }
   }
 
@@ -229,14 +217,14 @@ class CustomFormField extends StatelessWidget {
   final TextEditingController controller;
 
   const CustomFormField({
-    Key? key,
+    super.key,
     required this.label,
     this.isRequired = false,
     required this.hintText,
     this.suffixIcon,
     this.maxLines = 1,
     required this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

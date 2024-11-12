@@ -1,12 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:get/get.dart';
+import 'package:heycowmobileapp/controllers/auth_controller.dart';
 
 class RegisterPengangonScreen extends StatefulWidget {
-  const RegisterPengangonScreen({Key? key}) : super(key: key);
+  const RegisterPengangonScreen({super.key});
 
   @override
-  _RegisterPengangonScreenState createState() => _RegisterPengangonScreenState();
+  // ignore: library_private_types_in_public_api
+  _RegisterPengangonScreenState createState() =>
+      _RegisterPengangonScreenState();
 }
 
 class _RegisterPengangonScreenState extends State<RegisterPengangonScreen> {
@@ -15,6 +20,8 @@ class _RegisterPengangonScreenState extends State<RegisterPengangonScreen> {
   File? _foto;
   File? _fotoKtp;
   final ImagePicker _picker = ImagePicker();
+  final dio.Dio _dio = dio.Dio();
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   void dispose() {
@@ -39,14 +46,47 @@ class _RegisterPengangonScreenState extends State<RegisterPengangonScreen> {
   Future<void> _submitForm() async {
     if (_foto == null || _fotoKtp == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select both photos')),
+        const SnackBar(content: Text('Please select both photos')),
       );
       return;
     }
-    // Submit form logic here
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Pengangon registered successfully')),
-    );
+
+    var formData = dio.FormData.fromMap({
+      "selfie_ktp":
+          await dio.MultipartFile.fromFile(_foto!.path, filename: 'foto.jpeg'),
+      "ktp": await dio.MultipartFile.fromFile(_fotoKtp!.path,
+          filename: 'fotoKtp.jpeg'),
+      'nik': _nikController.text,
+      'upah': _upahController.text,
+    });
+
+    try {
+      final response = await _dio.post(
+        'https://heycow.my.id/api/users/submit-request-form',
+        data: formData,
+        options: dio.Options(
+          headers: {
+            "Authorization": 'Bearer ${_authController.accessToken}',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Pengangon registered successfully: ${response.data}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${response.statusMessage}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Submission failed: $e')),
+      );
+    }
   }
 
   @override
@@ -93,8 +133,8 @@ class _RegisterPengangonScreenState extends State<RegisterPengangonScreen> {
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                   backgroundColor: Colors.green,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -161,13 +201,13 @@ class CustomFormField extends StatelessWidget {
   final TextEditingController controller;
 
   const CustomFormField({
-    Key? key,
+    super.key,
     required this.label,
     this.isRequired = false,
     required this.hintText,
     this.suffixIcon,
     required this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

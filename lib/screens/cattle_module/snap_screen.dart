@@ -17,7 +17,6 @@ class _SnapScreenState extends State<SnapScreen> {
   bool isLoading = true; // For loading indicator
 
   bool isPayed = false;
-  bool _isLoading = false;
   
   @override
   void initState() {
@@ -30,17 +29,14 @@ class _SnapScreenState extends State<SnapScreen> {
       NavigationDelegate(
         onProgress: (int progress) {
           setState(() {
-            _isLoading = true;
           });
         },
         onPageStarted: (String url) {
           setState(() {
-            _isLoading = false;
           });
         },
         onPageFinished: (String url) {
           setState(() {
-            _isLoading = false;
           });
         },
         onWebResourceError: (WebResourceError error) {},

@@ -14,9 +14,10 @@ Future<Map<String, dynamic>> fetchHealthData() async {
 }
 
 class HealthMonitoringScreen extends StatefulWidget {
-  const HealthMonitoringScreen({Key? key}) : super(key: key);
+  const HealthMonitoringScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HealthMonitoringScreenState createState() => _HealthMonitoringScreenState();
 }
 

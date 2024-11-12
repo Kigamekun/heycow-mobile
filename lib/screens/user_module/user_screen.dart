@@ -63,7 +63,7 @@ class _UserScreenState extends State<UserScreen> {
                         ],
                       ),
                       Positioned(
-                        top: 160,
+                        top: 155,
                         left: 16,
                         right: 16,
                         child: Container(
@@ -91,9 +91,11 @@ class _UserScreenState extends State<UserScreen> {
                                 ),
                               ),
                               const SizedBox(height: 5),
-                              const Text(
-                                'Tidak Aktif',
-                                style: TextStyle(
+                              Text(
+                                _authController.isPengangon.value == 0
+                                    ? 'Belum Terdaftar'
+                                    : 'Sudah Terdaftar',
+                                style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -103,28 +105,80 @@ class _UserScreenState extends State<UserScreen> {
                                 child: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.8,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Get.to(RegisterPengangonScreen());
-                                      // Implement Upgrade Action
-                                    },
-                                    child: const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 12.0),
-                                      child: Text(
-                                        'Daftar Pengangon',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
+                                  child: Column(
+                                    children: [
+                                      if (_authController.isPengangon.value ==
+                                              0 &&
+                                          _authController.nik.value != '')
+                                        ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 40, vertical: 10),
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Sedang dalam Progress',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                      if (_authController.isPengangon.value ==
+                                          1)
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Get.to(() =>
+                                                const RegisterPengangonScreen());
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 40, vertical: 10),
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Edit Pengangon',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      if (_authController.isPengangon.value ==
+                                              0 &&
+                                          _authController.nik.value == '')
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Get.to(() =>
+                                                const RegisterPengangonScreen());
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 40, vertical: 16),
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Daftar Pengangon',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ),
                               ),

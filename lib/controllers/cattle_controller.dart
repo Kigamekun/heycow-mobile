@@ -314,6 +314,7 @@ class CattleController extends GetxController {
         }
         final Cattle cattle = Cattle(
           id: jsonData['id'],
+          diAngon: jsonData['diAngon'],
           name: jsonData['name'] ??
               'Unknown', // Provide a default value for safety
           breed: jsonData['breed'] != null

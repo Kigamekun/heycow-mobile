@@ -2,6 +2,7 @@ class Cattle {
   final int? id;
   final String? name;
   final String? breed;
+  final bool? diAngon;
   final String status;
   final String? type;
   final String? gender;
@@ -17,11 +18,11 @@ class Cattle {
   final String? temperature;
   final String? healthStatus;
 
-
   Cattle({
     this.id,
-     this.name,
+    this.name,
     this.breed,
+    this.diAngon,
     required this.status,
     this.type,
     this.gender,
@@ -38,7 +39,6 @@ class Cattle {
     this.healthStatus,
   });
 }
-
 
 class IoTDevice {
   final int id;
