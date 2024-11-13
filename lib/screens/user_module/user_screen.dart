@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:heycowmobileapp/controllers/auth_controller.dart'; // Import your AuthController
 import 'package:heycowmobileapp/screens/auth_module/edit_profile_screen.dart';
 import 'package:heycowmobileapp/screens/auth_module/help_center_screen.dart';
+import 'package:heycowmobileapp/screens/beranda_module/iot_screen.dart';
 import 'package:heycowmobileapp/screens/user_module/register_pengangon_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -13,15 +14,19 @@ class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
 
   @override
-  State<UserScreen> createState() => _UserScreenState();
+  UserScreenState createState() => UserScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class UserScreenState extends State<UserScreen> {
   final AuthController _authController = Get.find<AuthController>();
 
   @override
   void initState() {
     super.initState();
+    _authController.getUser(); // Call the getUserData method
+  }
+
+    void refreshData() {
     _authController.getUser(); // Call the getUserData method
   }
 
@@ -254,7 +259,9 @@ class _UserScreenState extends State<UserScreen> {
                               _buildOptionTile(
                                 Icons.device_hub,
                                 'IOT Device',
-                                onTap: () {},
+                                onTap: () {
+                                  Get.to(() =>  IOTScreen());
+                                },
                               ),
                               _buildOptionTile(
                                 Icons.logout,

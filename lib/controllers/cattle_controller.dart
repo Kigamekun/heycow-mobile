@@ -54,6 +54,7 @@ class CattleController extends GetxController {
             farmId: item['farm'] != null ? item['farm']['id'] : null,
             userId: item['farm'] != null ? item['farm']['user_id'] : null,
             iotDeviceId: item['iot_device_id'],
+            farmName: item['farmNow'] != null ? item['farmNow']['name'] : null,
             image: item['image'],
             temperature: item['first_health_record'] != null
                 ? item['first_health_record']['temperature']

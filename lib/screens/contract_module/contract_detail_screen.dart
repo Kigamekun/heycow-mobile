@@ -6,6 +6,7 @@ import 'package:heycowmobileapp/screens/cattle_module/snap_screen.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:heycowmobileapp/controllers/auth_controller.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ContractDetailScreen extends StatefulWidget {
   final int id;
@@ -19,6 +20,9 @@ class ContractDetailScreen extends StatefulWidget {
 class _ContractDetailScreenState extends State<ContractDetailScreen> {
   Map<String, dynamic>? contractDetails;
   final AuthController _authController = Get.find<AuthController>();
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController heightController = TextEditingController();
+  double rate = 0; // Variable for storing the rate value
 
   bool isLoading = true;
 
@@ -26,6 +30,13 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
   void initState() {
     super.initState();
     fetchContractDetails();
+  }
+
+  @override
+  void dispose() {
+    weightController.dispose();
+    heightController.dispose();
+    super.dispose();
   }
 
   Future<void> fetchContractDetails() async {
@@ -44,6 +55,7 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
         isLoading = false;
       });
     } else {
+      print('errror');
       // Handle error
       setState(() {
         isLoading = false;
@@ -52,17 +64,28 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
   }
 
   Future<void> selesaikanContrat() async {
+    final weight = weightController.text;
+    final height = heightController.text;
+
     final response = await http.post(
-      Uri.parse('https://heycow.my.id/api/contract/${widget.id}/return'),
+      Uri.parse('https://heycow.my.id/api/contract/${widget.id}/return'), 
+      body: {
+        'weight': weight.toString(),
+        'height': height.toString(),
+        'rate': rate.toString(),
+      },
       headers: <String, String>{
         'Authorization':
-            'Bearer ${_authController.accessToken}', // Add your auth token here
+            'Bearer ${_authController.accessToken}', 
+        'Accept': 'application/json',
       },
     );
 
     if (response.statusCode == 200) {
       fetchContractDetails();
     } else {
+      print(response.statusCode);
+      print(response.body);
       // Handle error
       setState(() {
         isLoading = false;
@@ -111,7 +134,7 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
       body: Column(
         children: [
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Container(
                 padding: const EdgeInsets.all(16.0),
@@ -270,7 +293,8 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
                           ),
                         ),
                       ),
-                    ] else if (contractDetails?['status'] == 'active') ...[
+                    ] else if (contractDetails?['status'] == 'active' ||
+                        contractDetails?['status'] == 'completed') ...[
                       const Row(
                         children: [
                           Icon(Icons.check_circle, color: Colors.green),
@@ -285,6 +309,60 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 16),
+
+                      // Weight input
+                      Row(
+                        children: [
+                          // Weight input
+                          Expanded(
+                            child: TextField(
+                              controller: weightController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Weight',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                              width: 16), // Spacing between the fields
+
+                          // Height input
+                          Expanded(
+                            child: TextField(
+                              controller: heightController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Height',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Rate input as star rating
+                      RatingBar.builder(
+                        initialRating: 0,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          setState(() {
+                            rate = rating;
+                          });
+                        },
+                      ),
+
                       const SizedBox(height: 16),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(

@@ -26,6 +26,7 @@ class MainScreenState extends State<MainScreen> {
 
   final CattleScreen cattleScreen = const CattleScreen();
   final CommunityScreen communityScreen = const CommunityScreen();
+  final UserScreen userScreen = const UserScreen();
 
   List<Widget> _buildScreens() {
     return [
@@ -45,12 +46,19 @@ class MainScreenState extends State<MainScreen> {
 
   final GlobalKey<CattleScreenState> cattleScreenKey =
       GlobalKey<CattleScreenState>();
+    
+    final GlobalKey<UserScreenState> userScreenKey =
+      GlobalKey<UserScreenState>();
 
   Future<void> _refreshCurrentScreen() async {
-    await Future.delayed(const Duration(seconds: 1));
+    // await Future.delayed(const Duration(seconds: 1));
     if (_bottomNavIndex == 1 && cattleScreenKey.currentState != null) {
       cattleScreenKey.currentState!.refreshData();
+    } else if (_bottomNavIndex == 4 && userScreenKey.currentState != null) {
+      print('ada disni');
+      userScreenKey.currentState!.refreshData();
     }
+
   }
 
   @override

@@ -154,7 +154,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
               ? SingleChildScrollView(
                   child: Container(
                     padding: const EdgeInsets.all(16),
-                    color: Colors.white,
+                    color: Color(0xFFEAEBED),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

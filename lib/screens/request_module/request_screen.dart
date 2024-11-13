@@ -252,7 +252,7 @@ class RequestItem extends StatelessWidget {
                 ),
               ],
             ),
-            if (isPengangon) ...[
+            if (isPengangon && statusText == 'pending') ...[
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

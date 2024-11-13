@@ -35,7 +35,7 @@ class RequestDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Color(0xFFEAEBED),
       appBar: AppBar(
         iconTheme: const IconThemeData(
           color: Colors.white, // Set tombol back menjadi putih

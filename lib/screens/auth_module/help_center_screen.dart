@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:heycowmobileapp/controllers/auth_controller.dart';
+import 'package:get/get.dart';
 
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({super.key});
@@ -9,33 +13,62 @@ class HelpCenterScreen extends StatefulWidget {
 
 class _HelpCenterScreenState extends State<HelpCenterScreen> {
   final _formKey = GlobalKey<FormState>();
-  String jenisSapi = '';
-  DateTime selectedDate = DateTime.now();
-  double tinggiSapi = 0;
-  double beratSapi = 0;
-  String kelaminSapi = '';
-  bool sudahVaksin = false;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _questionDetailController = TextEditingController();
+  String _selectedQuestionOption = 'Kerusakan Aplikasi';
+  final AuthController _authController = Get.find<AuthController>();
 
-  // Helper to pick date
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final url = Uri.parse('https://heycow.my.id/api/help_centers');
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization':
+            'Bearer ${_authController.accessToken}', 
+        'Content-Type': 'application/json'},
+      body: json.encode({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'question': _questionDetailController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data berhasil dikirim!')),
+      );
+      _formKey.currentState!.reset(); // Reset form after successful submission
+    } else {
+      print(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal mengirim data. Coba lagi.')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _questionDetailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white, // Set tombol back menjadi putih
-        ),
-        title: const Text('Help Center',
-            style: TextStyle(color: Colors.white, fontSize: 16)),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Help Center', style: TextStyle(color: Colors.white, fontSize: 16)),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF20A577), // Start color
-                Color(0xFF64CFAA), // End color
-              ],
+              colors: [Color(0xFF20A577), Color(0xFF64CFAA)],
             ),
           ),
         ),
@@ -50,58 +83,51 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const AlertBox(),
+                    // const AlertBox(),
                     Padding(
-                      padding: const EdgeInsets.only(right: 15, left: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          const SizedBox(height: 20),
                           TextFormField(
+                            controller: _nameController,
                             decoration: InputDecoration(
                               labelText: 'Nama Lengkap',
-                              labelStyle:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: Colors.purple, width: 2.0),
-                              ),
                               suffixIcon: const Icon(Icons.person),
                             ),
+                            validator: (value) =>
+                                value == null || value.isEmpty ? 'Nama harus diisi' : null,
                           ),
                           const SizedBox(height: 16),
-
-                          // Email Field
                           TextFormField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              labelStyle:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               suffixIcon: const Icon(Icons.email),
                             ),
                             keyboardType: TextInputType.emailAddress,
+                            validator: (value) =>
+                                value == null || value.isEmpty ? 'Email harus diisi' : null,
                           ),
                           const SizedBox(height: 16),
-
-                          // Question Options Dropdown
                           DropdownButtonFormField<String>(
                             decoration: InputDecoration(
                               labelText: 'Opsi Pertanyaan',
-                              labelStyle:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
+                            value: _selectedQuestionOption,
                             items: const [
                               DropdownMenuItem(
                                 value: 'Kerusakan Aplikasi',
@@ -117,46 +143,37 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                               ),
                             ],
                             onChanged: (value) {
-                              // Handle change
+                              setState(() {
+                                _selectedQuestionOption = value ?? 'Kerusakan Aplikasi';
+                              });
                             },
                           ),
                           const SizedBox(height: 16),
-
-                          // Detail Question Text Field
                           TextFormField(
+                            controller: _questionDetailController,
                             maxLines: 4,
                             decoration: InputDecoration(
                               labelText: 'Detail Pertanyaan',
-                              labelStyle:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
+                            validator: (value) =>
+                                value == null || value.isEmpty ? 'Pertanyaan harus diisi' : null,
                           ),
                           const SizedBox(height: 32),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // Handle form submission
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Data Ternak berhasil disubmit')),
-                                  );
-                                }
-                              },
+                              onPressed: _submitForm,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF20A577),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: const Text(
                                 'Submit',
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
+                                style: TextStyle(fontSize: 16, color: Colors.white),
                               ),
                             ),
                           ),
@@ -168,14 +185,12 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               ),
             ),
           ),
-          // Floating Bottom Navigation Bar
         ],
       ),
     );
   }
 }
 
-// AlertBox widget
 class AlertBox extends StatelessWidget {
   const AlertBox({super.key});
 
@@ -192,46 +207,6 @@ class AlertBox extends StatelessWidget {
           SizedBox(width: 8),
           Expanded(child: Text('Ada bagian form yang tidak terisi')),
         ],
-      ),
-    );
-  }
-}
-
-// GenderButton widget
-class GenderButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const GenderButton({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.isSelected,
-    required this.onTap,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.2) : Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 32, color: color),
-            const SizedBox(height: 4),
-            Text(label, style: TextStyle(color: color)),
-          ],
-        ),
       ),
     );
   }

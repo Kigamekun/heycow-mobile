@@ -11,6 +11,7 @@ class Cattle {
   final int? birthHeight;
   final int? farmId;
   final int? userId;
+  final String? farmName;
   final int? iotDeviceId;
   final String? image;
   final IoTDevice? iotDevice;
@@ -28,6 +29,7 @@ class Cattle {
     this.gender,
     this.birthDate,
     this.birthWeight,
+    this.farmName,
     this.birthHeight,
     this.farmId,
     this.userId,

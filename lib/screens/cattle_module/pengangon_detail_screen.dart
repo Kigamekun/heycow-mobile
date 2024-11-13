@@ -81,11 +81,10 @@ class _PengangonDetailScreenState extends State<PengangonDetailScreen> {
         const SnackBar(content: Text('Request berhasil')),
       );
 
-          final body = json.decode(response.body);
+      final body = json.decode(response.body);
 
-    // Pass the 'data' to the DetailRequestScreen
-    Get.to(() => DetailRequestScreen(data: body['data']));
-    
+      // Pass the 'data' to the DetailRequestScreen
+      Get.to(() => DetailRequestScreen(data: body['data']));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Gagal melakukan request')),

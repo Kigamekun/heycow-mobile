@@ -6,6 +6,9 @@ class IoTDevice {
   final String? qrImage;
   final String createdAt;
   final String updatedAt;
+  final String? ssid;
+  final String? password;
+  final int? userId;
 
   IoTDevice({
     required this.id,
@@ -15,5 +18,9 @@ class IoTDevice {
     this.qrImage,
     required this.createdAt,
     required this.updatedAt,
+    this.ssid,
+    this.password,
+    this.userId,
+    
   });
 }

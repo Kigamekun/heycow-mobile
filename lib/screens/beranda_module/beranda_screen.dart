@@ -149,7 +149,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                     minWidth: 12,
                                     minHeight: 12,
                                   ),
-                                  child:  Text(
+                                  child: Text(
                                     '$countNotif', // Angka notifikasi
                                     style: const TextStyle(
                                       color: Colors.white,
@@ -236,16 +236,12 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                       'Contract',
                                       const ContractScreen(),
                                     ),
-
-                                    // History Button
                                     _buildPngIconButton(
                                       context,
                                       'assets/history.png',
                                       'History',
                                       const HistoryScreen(), // Replace with the screen for "History"
                                     ),
-
-                                    // Request Button
                                     _buildPngIconButton(
                                       context,
                                       'assets/request.png',
@@ -524,8 +520,11 @@ class _BerandaScreenState extends State<BerandaScreen> {
                                         lastVaccinate: '12',
                                         status: cattle.status,
                                         statusIcon: Icons.check_circle,
-                                        healthStatus: 'Healthy',
-                                        temperature: '37',
+                                        healthStatus:
+                                            cattle.healthStatus ?? 'N/A',
+                                        temperature:
+                                            cattle.temperature ?? 'N/A',
+                                        farmName: cattle.farmName ?? 'N/A',
                                       ),
                                       const SizedBox(height: 15),
                                     ],
@@ -548,26 +547,6 @@ class _BerandaScreenState extends State<BerandaScreen> {
     );
   }
 }
-
-// Widget _buildPngIconButton(String assetPath, String label) {
-//   return Column(
-//     children: [
-//       Image.asset(
-//         assetPath,
-//         width: 20,
-//         height: 20,
-//       ),
-//       const SizedBox(height: 8),
-//       Text(
-//         label,
-//         style: const TextStyle(
-//           fontSize: 12,
-//           color: Colors.black,
-//         ),
-//       ),
-//     ],
-//   );
-// }
 
 Widget _buildPngIconButton(BuildContext context, String assetPath, String label,
     Widget destinationScreen) {
@@ -646,6 +625,7 @@ class CattleCard extends StatelessWidget {
   final IconData statusIcon;
   final String healthStatus;
   final String temperature;
+  final String farmName;
 
   const CattleCard({
     super.key,
@@ -657,6 +637,7 @@ class CattleCard extends StatelessWidget {
     required this.statusIcon,
     required this.healthStatus,
     required this.temperature,
+    required this.farmName,
   });
 
   @override
@@ -762,25 +743,43 @@ class CattleCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue, // Ubah warna sesuai kebutuhan
+                      borderRadius: BorderRadius.circular(12), // Bentuk bulat
+                    ),
+                    child: Text(
+                      farmName,
+                      style: const TextStyle(
+                        color: Colors.white, // Ubah warna teks jika diperlukan
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   Row(
                     children: [
-                      const Icon(Icons.monitor_heart_outlined,
-                          color: Colors.black),
-                      const SizedBox(width: 4),
-                      Text(healthStatus),
+                      Row(
+                        children: [
+                          const Icon(Icons.monitor_heart_outlined,
+                              color: Colors.black),
+                          const SizedBox(width: 4),
+                          Text(healthStatus),
+                        ],
+                      ),
+                      const SizedBox(width: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.thermostat_outlined,
+                              color: Colors.black),
+                          const SizedBox(width: 4),
+                          Text('$temperature°C'),
+                        ],
+                      ),
                     ],
-                  ),
-                  const SizedBox(width: 16),
-                  Row(
-                    children: [
-                      const Icon(Icons.thermostat_outlined,
-                          color: Colors.black),
-                      const SizedBox(width: 4),
-                      Text('$temperature°C'),
-                    ],
-                  ),
+                  )
                 ],
               ),
             ],

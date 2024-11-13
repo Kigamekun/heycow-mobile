@@ -104,9 +104,9 @@ class DetailRequestScreen extends StatelessWidget {
                                           _buildDetailsRow(
                                               "Nama Sapi", data['nama_sapi']),
                                           _buildDetailsRow("Durasi Mengangon",
-                                              "${data['durasi']} Bulan"),
+                                              "${data['durasi'].toString()} Bulan"),
                                           _buildDetailsRow(
-                                              "Biaya",  data['biaya']),
+                                              "Biaya",  data['biaya'].toString()),
                                           const SizedBox(height: 20),
                                           const Divider(),
                                           // Activity Section

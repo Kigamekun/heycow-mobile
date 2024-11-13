@@ -73,16 +73,16 @@ class _RegisterPengangonScreenState extends State<RegisterPengangonScreen> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('Pengangon registered successfully: ${response.data}')),
+          const SnackBar(content: Text('Pengangon registered successfully')),
         );
+        Navigator.of(context).pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${response.statusMessage}')),
         );
       }
     } catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Submission failed: $e')),
       );
@@ -92,11 +92,25 @@ class _RegisterPengangonScreenState extends State<RegisterPengangonScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: const Color(0xFFEAEBED),
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, // Set tombol back menjadi putih
+        ),
         title: const Text('Register Pengangon',
             style: TextStyle(color: Colors.white, fontSize: 16)),
-        backgroundColor: Colors.green,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF20A577), // Start color
+                Color(0xFF64CFAA), // End color
+              ],
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

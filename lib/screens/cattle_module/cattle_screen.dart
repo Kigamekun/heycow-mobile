@@ -108,8 +108,7 @@ class CattleScreenState extends State<CattleScreen> {
                                       child: TextField(
                                         controller: searchController,
                                         decoration: const InputDecoration(
-                                          hintText:
-                                              "Search Cattle Name",
+                                          hintText: "Search Cattle Name",
                                           hintStyle: TextStyle(
                                             color: Colors.grey, // Text color
                                           ),
@@ -201,7 +200,7 @@ class CattleScreenState extends State<CattleScreen> {
                                 child: Column(
                                   children: [
                                     CattleCard(
-                                      id : cattle.id.toString(),
+                                      id: cattle.id.toString(),
                                       cattleName: cattle.name ??
                                           'N/A', // Check for null
                                       iotId: cattle.iotDevice?.serialNumber ??
@@ -210,8 +209,10 @@ class CattleScreenState extends State<CattleScreen> {
                                           '${cattle.breed} (${cattle.birthWeight} kg)',
                                       lastVaccinate: '12',
                                       status: cattle.status,
+                                      farmName: cattle.farmName ?? 'N/A',
                                       statusIcon: Icons.check_circle,
-                                      healthStatus: cattle.healthStatus ?? 'N/A',
+                                      healthStatus:
+                                          cattle.healthStatus ?? 'N/A',
                                       temperature: cattle.temperature ?? 'N/A',
                                       onDelete: () {
                                         // Delete function
@@ -250,6 +251,7 @@ class CattleCard extends StatelessWidget {
   final IconData statusIcon;
   final String healthStatus;
   final String temperature;
+  final String farmName;
   final VoidCallback onDelete; // Callback to handle delete action
 
   const CattleCard({
@@ -263,6 +265,7 @@ class CattleCard extends StatelessWidget {
     required this.statusIcon,
     required this.healthStatus,
     required this.temperature,
+    required this.farmName,
     required this.onDelete,
   });
 
@@ -407,25 +410,44 @@ class CattleCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue, // Ubah warna sesuai kebutuhan
+                      borderRadius: BorderRadius.circular(12), // Bentuk bulat
+                    ),
+                    child: Text(
+                      farmName,
+                      style: const TextStyle(
+                        color: Colors.white, // Ubah warna teks jika diperlukan
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   Row(
                     children: [
-                      const Icon(Icons.monitor_heart_outlined,
-                          color: Colors.black),
-                      const SizedBox(width: 4),
-                      Text(healthStatus),
+                      Row(
+                        children: [
+                          const Icon(Icons.monitor_heart_outlined,
+                              color: Colors.black),
+                          const SizedBox(width: 4),
+                          Text(healthStatus),
+                        ],
+                      ),
+                      const SizedBox(width: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.thermostat_outlined,
+                              color: Colors.black),
+                          const SizedBox(width: 4),
+                          Text('$temperature°C'),
+                        ],
+                      ),
                     ],
-                  ),
-                  const SizedBox(width: 16),
-                  Row(
-                    children: [
-                      const Icon(Icons.thermostat_outlined,
-                          color: Colors.black),
-                      const SizedBox(width: 4),
-                      Text('$temperature°C'),
-                    ],
-                  ),
+                  )
                 ],
               ),
             ],
